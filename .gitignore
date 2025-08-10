@@ -1,0 +1,15 @@
+# SQLite
+db.sqlite3
+db.sqlite3-journal
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Media files
+media/
+
+# Môi trường ảo (nếu có)
+.venv
+venv/
+env/
