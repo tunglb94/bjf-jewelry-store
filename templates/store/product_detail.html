@@ -1,0 +1,188 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+{% load custom_filters %}
+{% comment %} {% load group_by %} {% endcomment %}
+
+{% block title %}{{ product.name }} - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+            <div class="flex flex-col gap-4">
+                <div class="aspect-square rounded-2xl overflow-hidden shadow-lg">
+                    <img id="main-product-image" src="{% if images %}{{ images.first.image.url }}{% else %}https://placehold.co/600x600/EEE/31343C?text=BJF{% endif %}" alt="{{ product.name }}" class="w-full h-full object-cover transition-opacity duration-300">
+                </div>
+
+                {% if images.count > 1 %}
+                <div class="swiper product-thumbnail-slider">
+                    <div class="swiper-wrapper">
+                        {% for img in images %}
+                        <div class="swiper-slide cursor-pointer rounded-lg border-2 {% if forloop.first %}border-primary{% else %}border-transparent{% endif %} transition-all duration-300 hover:border-primary">
+                            <div class="w-24 h-24 overflow-hidden">
+                                <img src="{{ img.image.url }}" alt="{{ product.name }} thumbnail {{ forloop.counter }}" class="w-full h-full object-cover product-thumb {% if forloop.first %}active{% endif %}" data-full-image-url="{{ img.image.url }}">
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    <div class="swiper-button-next !text-primary"></div>
+                    <div class="swiper-button-prev !text-primary"></div>
+                </div>
+                {% endif %}
+            </div>
+
+            <div>
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">{{ product.name }}</h1>
+                <p class="text-gray-500 mb-6">Mã sản phẩm: {{ product.sku|default:"Đang cập nhật" }}</p>
+                
+                <div class="mb-6">
+                    {% if product.sale_price %}
+                        <span id="current-price" class="text-4xl font-bold gradient-text">{{ product.sale_price|format_currency }} VND</span>
+                        <span class="ml-4 text-2xl text-gray-500 line-through">{{ product.price|format_currency }} VND</span>
+                        <input type="hidden" id="base-price" value="{{ product.sale_price }}">
+                    {% else %}
+                        <span id="current-price" class="text-4xl font-bold gradient-text">{{ product.price|format_currency }} VND</span>
+                        <input type="hidden" id="base-price" value="{{ product.price }}">
+                    {% endif %}
+                </div>
+
+                <div class="prose max-w-none text-gray-600 mb-8">
+                    {{ product.description|linebreaks }}
+                </div>
+
+                <form action="{% url 'store:add_to_cart' %}" method="POST">
+                    {% csrf_token %}
+                    <input type="hidden" name="product_id" value="{{ product.id }}">
+                    
+                    {% for variation_type, variations in grouped_variations.items %}
+                    <div class="mb-6">
+                        <h3 class="font-semibold text-gray-800 mb-3">Chọn {{ variation_type }}:</h3>
+                        <div class="flex flex-wrap gap-3">
+                            {% for variation in variations %}
+                            <label class="inline-flex items-center cursor-pointer">
+                                <input type="radio" name="variation_{{ variation_type }}" value="{{ variation.id }}" class="hidden peer variation-radio" data-price-change="{{ variation.price_change }}" required>
+                                <span class="py-2 px-4 rounded-full border border-gray-300 text-gray-700 transition-colors peer-checked:bg-primary peer-checked:text-white peer-checked:border-primary hover:bg-gray-100">
+                                    {{ variation.variation_name }}
+                                </span>
+                            </label>
+                            {% endfor %}
+                        </div>
+                    </div>
+                    {% endfor %}
+
+                    <div class="flex items-center gap-4 mb-6">
+                        <label for="quantity" class="font-semibold">Số lượng:</label>
+                        <input type="number" id="quantity" name="quantity" value="1" min="1" max="{{ product.stock }}" class="w-20 p-2 border border-gray-300 rounded-md text-center">
+                    </div>
+                    
+                    <button type="submit" class="w-full bg-primary hover:bg-secondary text-white px-8 py-4 rounded-lg font-semibold text-lg transition-colors">
+                        Thêm vào giỏ hàng
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Sản Phẩm Tương Tự</h2>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for related_product in related_products %}
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg product-hover">
+                <a href="{% url 'store:product_detail' related_product.slug %}" class="block">
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{% if related_product.images.first.image %}{{ related_product.images.first.image.url }}{% else %}https://placehold.co/600x600/EEE/31343C?text=BJF{% endif %}" alt="{{ related_product.name }}" class="w-full h-full object-cover"/>
+                    </div>
+                </a>
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 truncate">{{ related_product.name }}</h3>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            {% if related_product.sale_price %}
+                                <span class="text-2xl font-bold gradient-text">{{ related_product.sale_price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                                <span class="ml-2 text-gray-500 line-through">{{ related_product.price|format_currency }}</span>
+                            {% else %}
+                                <span class="text-2xl font-bold gradient-text">{{ related_product.price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                            {% endif %}
+                        </div>
+                        <form action="{% url 'store:add_to_cart' %}" method="POST">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ related_product.id }}">
+                            <button type="submit" class="bg-primary hover:bg-secondary text-white p-2 rounded-lg transition-colors">
+                                <i class="ri-shopping-cart-add-line text-xl"></i>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const basePriceInput = document.getElementById('base-price');
+        const currentPriceSpan = document.getElementById('current-price');
+        const variationRadios = document.querySelectorAll('.variation-radio');
+        const mainImage = document.getElementById('main-product-image');
+        const thumbnails = document.querySelectorAll('.product-thumb');
+
+        // Cấu hình Swiper cho slide ảnh nhỏ, đảm bảo tắt autoplay và loop
+        if (thumbnails.length > 0) {
+            new Swiper('.product-thumbnail-slider', {
+                slidesPerView: 4,
+                spaceBetween: 10,
+                loop: false, // Tắt lặp lại
+                autoplay: false, // Tắt tự động chạy
+                navigation: {
+                    nextEl: '.swiper-button-next',
+                    prevEl: '.swiper-button-prev',
+                },
+            });
+        }
+
+        // Chuyển đổi ảnh chính khi click vào ảnh nhỏ và cập nhật viền
+        thumbnails.forEach(thumb => {
+            thumb.addEventListener('click', function() {
+                mainImage.src = this.dataset.fullImageUrl;
+                
+                // Loại bỏ viền active cũ
+                const activeThumbContainer = document.querySelector('.product-thumbnail-slider .swiper-slide.border-primary');
+                if (activeThumbContainer) {
+                    activeThumbContainer.classList.remove('border-primary');
+                    activeThumbContainer.classList.add('border-transparent');
+                }
+                
+                // Thêm viền active mới
+                this.closest('.swiper-slide').classList.remove('border-transparent');
+                this.closest('.swiper-slide').classList.add('border-primary');
+            });
+        });
+
+        function formatCurrency(value) {
+            return new Intl.NumberFormat('vi-VN').format(value);
+        }
+
+        function updatePrice() {
+            let totalPrice = parseFloat(basePriceInput.value);
+            variationRadios.forEach(radio => {
+                if (radio.checked) {
+                    totalPrice += parseFloat(radio.dataset.priceChange);
+                }
+            });
+            currentPriceSpan.innerText = formatCurrency(totalPrice) + ' VND';
+        }
+        
+        variationRadios.forEach(radio => {
+            radio.addEventListener('change', updatePrice);
+        });
+
+        // Set initial state
+        updatePrice();
+    });
+</script>
+{% endblock %}

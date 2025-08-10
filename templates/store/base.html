@@ -1,0 +1,144 @@
+{% load static %}
+{% load humanize %}
+{% load custom_filters %}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %}{{ settings.site_name }}{% endblock %}</title>
+    <meta name="description" content="{{ settings.site_description }}">
+    {% if settings.favicon %}
+    <link rel="icon" href="{{ settings.favicon.url }}">
+    {% endif %}
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.2.0/remixicon.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css"/>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+    <script>
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              primary: "#FF4500",
+              secondary: "#FF8C00",
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .gradient-bg {
+        background: linear-gradient(135deg, #FF4500 0%, #FF8C00 100%);
+      }
+      .gradient-text {
+        background: linear-gradient(135deg, #FF4500 0%, #FF8C00 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+      }
+      .product-hover {
+        transition: all 0.3s ease;
+      }
+      .product-hover:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 20px 40px rgba(255, 69, 0, 0.15);
+      }
+      .swiper-button-next, .swiper-button-prev {
+        color: white !important;
+      }
+      .swiper-pagination-bullet-active {
+        background: white !important;
+      }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <header class="gradient-bg shadow-lg sticky top-0 z-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-20">
+                <a href="{% url 'store:home' %}" class="text-white text-3xl font-bold">{{ settings.logo_text }}</a>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="{% url 'store:home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Trang chủ</a>
+                    <a href="{% url 'store:product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Sản phẩm</a>
+                    <a href="{% url 'store:post_list' %}" class="{% if request.resolver_match.url_name == 'post_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Tin tức</a>
+                    <a href="{% url 'store:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Liên hệ</a>
+                </nav>
+                <div class="flex items-center space-x-4">
+                    <div class="relative hidden lg:block">
+                        <input type="text" placeholder="Tìm kiếm sản phẩm..." class="w-64 px-4 py-2 rounded-full border-none text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-300"/>
+                        <i class="ri-search-line text-gray-500 absolute right-4 top-1/2 -translate-y-1/2"></i>
+                    </div>
+                    <a href="{% url 'store:cart_detail' %}" class="text-white hover:text-yellow-200 transition-colors relative">
+                        <i class="ri-shopping-cart-line text-2xl"></i>
+                        {% if request.session.cart %}
+                        <span class="absolute -top-2 -right-2 bg-red-500 text-white text-xs w-5 h-5 rounded-full flex items-center justify-center">{{ request.session.cart|length }}</span>
+                        {% endif %}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        {% if messages %}
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mt-4">
+            {% for message in messages %}
+            <div class="p-4 rounded-md bg-green-100 text-green-800 text-center font-medium">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="gradient-bg text-white pt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div>
+                    <h3 class="text-2xl font-bold mb-6">{{ settings.logo_text }}</h3>
+                    <p class="text-gray-200 mb-6">Tôn vinh vẻ đẹp Việt qua những tuyệt tác trang sức vượt thời gian.</p>
+                    <div class="flex space-x-4">
+                        <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all"><i class="ri-facebook-fill"></i></a>
+                        <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all"><i class="ri-instagram-line"></i></a>
+                        <a href="#" class="w-10 h-10 bg-white bg-opacity-20 rounded-full flex items-center justify-center hover:bg-opacity-30 transition-all"><i class="ri-youtube-line"></i></a>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Thông tin liên hệ</h3>
+                    <div class="space-y-4">
+                        <p class="flex items-start"><i class="ri-map-pin-line mr-3 mt-1"></i>{{ settings.footer_address }}</p>
+                        <p class="flex items-center"><i class="ri-phone-line mr-3"></i>{{ settings.footer_phone }}</p>
+                        <p class="flex items-center"><i class="ri-mail-line mr-3"></i>{{ settings.footer_email }}</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Hệ thống cửa hàng</h3>
+                    <div class="space-y-3 text-gray-200">
+                        <p>BJF Hà Nội</p>
+                        <p>BJF TP. Hồ Chí Minh</p>
+                        <p>BJF Đà Nẵng</p>
+                        <p>BJF Cần Thơ</p>
+                    </div>
+                </div>
+                <div>
+                    <h3 class="text-lg font-semibold mb-6">Đăng ký nhận tin</h3>
+                    <p class="text-gray-200 mb-4">Nhận thông tin về sản phẩm mới và các chương trình ưu đãi đặc biệt.</p>
+                    <div class="flex gap-2">
+                        <input type="email" placeholder="Email của bạn" class="flex-1 px-4 py-2 rounded-lg border-none text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-300"/>
+                        <button class="bg-white text-primary px-5 py-2 rounded-lg font-semibold hover:bg-gray-100 transition-colors">Đăng ký</button>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-white border-opacity-20 mt-12 py-8 text-center">
+                <p class="text-gray-200">{{ settings.footer_copyright }}</p>
+            </div>
+        </div>
+    </footer>
+</body>
+</html>

@@ -1,0 +1,32 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+{% block title %}Tin Tức - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h1 class="text-4xl font-bold text-gray-900">Tin Tức & Sự Kiện</h1>
+            <p class="text-xl text-gray-600 mt-2">Cập nhật những thông tin mới nhất từ BJF</p>
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for post in posts %}
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg transition-all duration-300 hover:shadow-2xl hover:-translate-y-2">
+                <a href="{% url 'store:post_detail' post.slug %}" class="block">
+                    <img src="{% if post.image %}{{ post.image.url }}{% else %}https://placehold.co/400x250/EEE/31343C?text=BJF{% endif %}" alt="{{ post.title }}" class="w-full h-52 object-cover">
+                    <div class="p-6">
+                        <p class="text-sm text-gray-500 mb-2">{{ post.published_date|date:"d/m/Y" }} · <span class="text-primary font-semibold">{{ post.author }}</span></p>
+                        <h3 class="text-xl font-bold text-gray-900 mb-3">{{ post.title }}</h3>
+                        <p class="text-gray-600 mb-4 line-clamp-3">{{ post.content|truncatewords:30 }}</p>
+                        <span class="font-semibold text-primary hover:text-secondary">Đọc thêm →</span>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="col-span-full text-center text-gray-600">Chưa có bài viết nào.</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,189 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block content %}
+<section>
+    <div class="swiper hero-slider">
+        <div class="swiper-wrapper">
+            {% for banner in banners %}
+            <div class="swiper-slide">
+                <div class="block relative min-h-[600px] flex items-center bg-cover bg-center" style="background-image: url('{{ banner.image.url }}');">
+                    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                        <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                            {{ banner.title|default:settings.hero_title }} <br />
+                            {% if banner.subtitle %}
+                            <span class="text-yellow-300">{{ banner.subtitle }}</span>
+                            {% endif %}
+                        </h1>
+                        <p class="text-xl mb-8 text-gray-200 max-w-3xl mx-auto">
+                            {{ settings.hero_description }}
+                        </p>
+                        <a href="{{ banner.link|default:'#' }}" class="bg-primary hover:bg-secondary text-white px-10 py-4 rounded-full font-semibold text-lg transition-colors duration-200">
+                            Khám Phá Ngay
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="swiper-slide">
+                <div class="relative min-h-[600px] flex items-center bg-cover bg-center" style="background-image: {% if settings.hero_background_image %}url('{{ settings.hero_background_image.url }}'){% else %}url('https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070&auto=format&fit=crop'){% endif %};">
+                    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
+                    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+                        <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
+                            {{ settings.hero_title }} <br />
+                            <span class="text-yellow-300">{{ settings.hero_subtitle }}</span>
+                        </h1>
+                        <p class="text-xl mb-8 text-gray-200 max-w-3xl mx-auto">
+                            {{ settings.hero_description }}
+                        </p>
+                        <a href="{% url 'store:product_list' %}" class="bg-primary hover:bg-secondary text-white px-10 py-4 rounded-full font-semibold text-lg transition-colors duration-200">
+                            Khám Phá Bộ Sưu Tập
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="swiper-button-next"></div>
+        <div class="swiper-button-prev"></div>
+        <div class="swiper-pagination"></div>
+    </div>
+</section>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Danh Mục Sản Phẩm</h2>
+            <p class="text-xl text-gray-600">Tìm kiếm sản phẩm trang sức theo phong cách của bạn</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for category in categories %}
+            <div class="group cursor-pointer">
+                <a href="#">
+                    <div class="bg-orange-50 rounded-2xl p-8 text-center transition-all duration-300 group-hover:shadow-xl group-hover:scale-105">
+                        <div class="w-20 h-20 mx-auto mb-6 flex items-center justify-center overflow-hidden rounded-full">
+                            {% if category.image %}
+                                <img src="{{ category.image.url }}" alt="{{ category.name }}" class="w-full h-full object-cover">
+                            {% else %}
+                                <div class="w-full h-full gradient-bg flex items-center justify-center">
+                                    <i class="ri-vip-diamond-line text-3xl text-white"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        <h3 class="text-xl font-semibold text-gray-900 mb-2">{{ category.name }}</h3>
+                    </div>
+                </a>
+            </div>
+            {% empty %}
+            <p class="text-gray-600 col-span-full text-center">Chưa có danh mục nào.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Sản Phẩm Nổi Bật</h2>
+            <p class="text-xl text-gray-600">Những thiết kế được yêu thích nhất tại BJF</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            {% for product in products %}
+            <div class="bg-white rounded-2xl overflow-hidden shadow-lg product-hover">
+                <a href="{% url 'store:product_detail' product.slug %}" class="block">
+                    <div class="aspect-square overflow-hidden">
+                        <img src="{% if product.images.first.image %}{{ product.images.first.image.url }}{% else %}https://placehold.co/600x600/EEE/31343C?text=BJF{% endif %}" alt="{{ product.name }}" class="w-full h-full object-cover"/>
+                    </div>
+                </a>
+                <div class="p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-2 truncate">{{ product.name }}</h3>
+                    <div>
+                        {% if product.sale_price %}
+                            <span class="text-2xl font-bold gradient-text">{{ product.sale_price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                            <span class="ml-2 text-gray-500 line-through">{{ product.price|format_currency }}</span>
+                        {% else %}
+                            <span class="text-2xl font-bold gradient-text">{{ product.price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                        {% endif %}
+                    </div>
+                    <div class="mt-4 space-y-2">
+                        <form action="{% url 'store:add_to_cart' %}" method="POST" class="block">
+                            {% csrf_token %}
+                            <input type="hidden" name="product_id" value="{{ product.id }}">
+                            <button type="submit" class="w-full bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                                Thêm vào giỏ hàng
+                            </button>
+                        </form>
+                        <a href="{% url 'store:product_detail' product.slug %}" class="block text-center border border-gray-300 hover:border-primary hover:text-primary text-gray-800 px-4 py-2 rounded-lg font-semibold transition-colors">
+                            Xem chi tiết
+                        </a>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <p class="text-gray-600 col-span-full text-center">Chưa có sản phẩm nổi bật nào để hiển thị.</p>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-bold text-gray-900 mb-4">Cam Kết Của BJF</h2>
+            <p class="text-xl text-gray-600">Giá trị tạo nên thương hiệu</p>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div class="bg-orange-50 rounded-2xl p-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-shield-check-line text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Chất Lượng Vượt Trội</h3>
+                <p class="text-gray-600">Sản phẩm được kiểm định nghiêm ngặt, đảm bảo tuổi vàng và chất lượng đá quý.</p>
+            </div>
+            <div class="bg-orange-50 rounded-2xl p-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-award-line text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Thiết Kế Độc Quyền</h3>
+                <p class="text-gray-600">Những mẫu trang sức tinh xảo, dẫn đầu xu hướng và mang đậm dấu ấn riêng.</p>
+            </div>
+            <div class="bg-orange-50 rounded-2xl p-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-customer-service-2-line text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Dịch Vụ Tận Tâm</h3>
+                <p class="text-gray-600">Đội ngũ tư vấn chuyên nghiệp, sẵn sàng hỗ trợ khách hàng 24/7.</p>
+            </div>
+            <div class="bg-orange-50 rounded-2xl p-8 text-center">
+                <div class="w-16 h-16 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-recycle-line text-3xl text-white"></i>
+                </div>
+                <h3 class="text-xl font-semibold text-gray-900 mb-3">Chính Sách Thu Đổi</h3>
+                <p class="text-gray-600">Chính sách thu đổi và bảo hành trọn đời, minh bạch và hấp dẫn.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const swiper = new Swiper('.hero-slider', {
+            loop: true,
+            autoplay: {
+                delay: {{ settings.slider_delay|default:5 }} * 1000,
+                disableOnInteraction: false,
+            },
+            pagination: {
+                el: '.swiper-pagination',
+                clickable: true,
+            },
+            navigation: {
+                nextEl: '.swiper-button-next',
+                prevEl: '.swiper-button-prev',
+            },
+        });
+    });
+</script>
+{% endblock %}

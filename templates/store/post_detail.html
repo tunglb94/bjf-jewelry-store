@@ -1,0 +1,34 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ post.meta_title|default:post.title }} - {{ settings.site_name }}{% endblock %}
+
+{% block head %}
+    {% if post.meta_description %}
+        <meta name="description" content="{{ post.meta_description }}">
+    {% endif %}
+    {% if post.keywords %}
+        <meta name="keywords" content="{{ post.keywords }}">
+    {% endif %}
+{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl">
+            <p class="text-sm text-gray-500 mb-2">{{ post.published_date|date:"d/m/Y" }} bởi <span class="text-primary font-semibold">{{ post.author }}</span></p>
+            <h1 class="text-4xl font-bold text-gray-900 mb-6">{{ post.title }}</h1>
+            
+            {% if post.image %}
+            <div class="mb-8">
+                <img src="{{ post.image.url }}" alt="{{ post.title }}" class="w-full rounded-2xl">
+            </div>
+            {% endif %}
+
+            <div class="prose max-w-none text-gray-600">
+                {{ post.content|linebreaks }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
