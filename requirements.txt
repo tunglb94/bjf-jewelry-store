@@ -1,0 +1,8 @@
+Django
+jazzmin
+django-solo
+django-ckeditor
+django-group-by
+Pillow
+gunicorn
+whitenoise[brotli]
