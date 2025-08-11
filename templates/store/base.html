@@ -59,13 +59,21 @@
     <header class="gradient-bg shadow-lg sticky top-0 z-50">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div class="flex items-center justify-between h-20">
+                <div class="md:hidden">
+                    <button id="mobile-menu-button" class="text-white">
+                        <i class="ri-menu-line text-3xl"></i>
+                    </button>
+                </div>
+
                 <a href="{% url 'store:home' %}" class="text-white text-3xl font-bold">{{ settings.logo_text }}</a>
+                
                 <nav class="hidden md:flex space-x-8">
                     <a href="{% url 'store:home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Trang chủ</a>
                     <a href="{% url 'store:product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Sản phẩm</a>
                     <a href="{% url 'store:post_list' %}" class="{% if request.resolver_match.url_name == 'post_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Tin tức</a>
                     <a href="{% url 'store:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Liên hệ</a>
                 </nav>
+
                 <div class="flex items-center space-x-4">
                     <div class="relative hidden lg:block">
                         <input type="text" placeholder="Tìm kiếm sản phẩm..." class="w-64 px-4 py-2 rounded-full border-none text-gray-800 focus:outline-none focus:ring-2 focus:ring-yellow-300"/>
@@ -81,6 +89,21 @@
             </div>
         </div>
     </header>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-50 z-50 transform -translate-x-full transition-transform duration-300 md:hidden">
+        <div class="relative w-64 h-full bg-gray-800 p-6">
+            <button id="close-menu-button" class="absolute top-4 right-4 text-white">
+                <i class="ri-close-line text-3xl"></i>
+            </button>
+            <nav class="flex flex-col space-y-6 mt-12">
+                <a href="{% url 'store:home' %}" class="text-white hover:text-yellow-200">Trang chủ</a>
+                <a href="{% url 'store:product_list' %}" class="text-white hover:text-yellow-200">Sản phẩm</a>
+                <a href="{% url 'store:post_list' %}" class="text-white hover:text-yellow-200">Tin tức</a>
+                <a href="{% url 'store:contact' %}" class="text-white hover:text-yellow-200">Liên hệ</a>
+            </nav>
+        </div>
+    </div>
+
 
     <main>
         {% if messages %}
@@ -154,5 +177,28 @@
             {% endif %}
         {% endfor %}
     </div>
-    </body>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const closeMenuButton = document.getElementById('close-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', function () {
+                mobileMenu.classList.remove('-translate-x-full');
+            });
+
+            closeMenuButton.addEventListener('click', function () {
+                mobileMenu.classList.add('-translate-x-full');
+            });
+            
+            // Tùy chọn: Đóng menu khi click ra ngoài
+            mobileMenu.addEventListener('click', function (event) {
+                if (event.target === mobileMenu) {
+                    mobileMenu.classList.add('-translate-x-full');
+                }
+            });
+        });
+    </script>
+</body>
 </html>
