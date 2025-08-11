@@ -7,11 +7,9 @@ from django.conf.urls.static import static
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    # THÊM DÒNG NÀY ĐỂ KÍCH HOẠT CHỨC NĂNG UPLOAD ẢNH
-    path('ckeditor/', include('ckeditor_uploader.urls')),
+    path('ckeditor/', include('ckeditor_uploader.urls')), # THÊM DÒNG NÀY
     path('', include('store.urls')),
 ]
 
-# Dòng này chỉ dùng khi DEBUG=True, trên production PythonAnywhere không dùng
 if settings.DEBUG:
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

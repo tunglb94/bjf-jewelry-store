@@ -2,7 +2,6 @@ Django
 django-jazzmin
 django-solo
 django-ckeditor
-django-ckeditor-uploader
 django-group-by
 Pillow
 gunicorn
