@@ -137,7 +137,7 @@
         <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
             {% for testimonial in testimonials %}
             <div class="bg-gray-50 p-8 rounded-2xl shadow-lg text-center">
-                <img src="{{ testimonial.image.url }}" alt="Khách hàng {{ testimonial.name }}" class="w-20 h-20 rounded-full mx-auto mb-4 border-4 border-primary object-cover">
+                <img src="{{ testimonial.image.url }}" alt="Khách hàng {{ testimonial.name }}" class="w-40 h-40 rounded-full mx-auto mb-6 border-4 border-primary object-cover">
                 <p class="text-gray-600 mb-4 italic">"{{ testimonial.quote }}"</p>
                 <h4 class="font-bold text-lg text-gray-900">{{ testimonial.name }}</h4>
                 <p class="text-sm text-gray-500">{{ testimonial.title }}</p>
