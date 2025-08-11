@@ -7,10 +7,24 @@
     <div class="swiper hero-slider">
         <div class="swiper-wrapper">
             {% for banner in banners %}
-            <div class="swiper-slide">
-                <div class="block relative min-h-[600px] flex items-center bg-cover bg-center" style="background-image: url('{{ banner.image.url }}');">
-                    <div class="absolute inset-0 bg-black bg-opacity-50"></div>
-                    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
+            <div class.swiper-slide">
+                <div class="relative min-h-[85vh] w-full flex items-center overflow-hidden">
+                    
+                    <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
+
+                    {% if banner.file_type == 'video' and banner.video_url %}
+                        <iframe 
+                            class="absolute top-1/2 left-1/2 min-w-full min-h-full w-auto h-auto object-cover transform -translate-x-1/2 -translate-y-1/2"
+                            src="{{ banner.video_url }}?autoplay=1&mute=1&loop=1&playlist={{ banner.video_url|slice:'30:' }}&controls=0" 
+                            frameborder="0" 
+                            allow="autoplay; encrypted-media" 
+                            allowfullscreen>
+                        </iframe>
+                    {% else %}
+                        <div class="absolute inset-0 bg-cover bg-center" style="background-image: url('{% if banner.image %}{{ banner.image.url }}{% endif %}');"></div>
+                    {% endif %}
+
+                    <div class="relative z-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                         <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">
                             {{ banner.title|default:settings.hero_title }} <br />
                             {% if banner.subtitle %}
@@ -28,7 +42,7 @@
             </div>
             {% empty %}
             <div class="swiper-slide">
-                <div class="relative min-h-[600px] flex items-center bg-cover bg-center" style="background-image: {% if settings.hero_background_image %}url('{{ settings.hero_background_image.url }}'){% else %}url('https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070&auto=format&fit=crop'){% endif %};">
+                <div class="relative min-h-[85vh] flex items-center bg-cover bg-center" style="background-image: {% if settings.hero_background_image %}url('{{ settings.hero_background_image.url }}'){% else %}url('https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070&auto=format&fit=crop'){% endif %};">
                     <div class="absolute inset-0 bg-black bg-opacity-50"></div>
                     <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center text-white">
                         <h1 class="text-5xl lg:text-7xl font-bold mb-6 leading-tight">

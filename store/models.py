@@ -128,16 +128,38 @@ class OrderItem(models.Model):
         return str(self.id)
 
 class Banner(models.Model):
-    image = models.ImageField(upload_to='banners/', verbose_name="Hình ảnh banner")
+    BUTTON_TYPE_CHOICES = (
+        ('image', 'Hình ảnh'),
+        ('video', 'Video'),
+    )
+    file_type = models.CharField(
+        max_length=10, 
+        choices=BUTTON_TYPE_CHOICES, 
+        default='image', 
+        verbose_name="Loại banner"
+    )
+    image = models.ImageField(
+        upload_to='banners/', 
+        verbose_name="Hình ảnh banner", 
+        blank=True, null=True, 
+        help_text="Tải lên nếu loại banner là 'Hình ảnh'."
+    )
+    video_url = models.URLField(
+        blank=True, null=True, 
+        verbose_name="Đường dẫn Video (YouTube/Vimeo Embed)",
+        help_text="Dán link EMBED vào đây nếu loại banner là 'Video'. Ví dụ: https://www.youtube.com/embed/your_video_id"
+    )
     title = models.CharField(max_length=255, blank=True, verbose_name="Tiêu đề chính (tùy chọn)")
     subtitle = models.CharField(max_length=255, blank=True, verbose_name="Tiêu đề phụ (tùy chọn)")
     link = models.URLField(blank=True, verbose_name="Đường dẫn (tùy chọn)")
     is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
     order = models.PositiveIntegerField(default=0, help_text="Thứ tự hiển thị, số nhỏ hơn hiện trước", verbose_name="Thứ tự")
+    
     class Meta:
         verbose_name = "Banner"
         verbose_name_plural = "Các Banner"
         ordering = ['order']
+        
     def __str__(self):
         return self.title or f"Banner {self.id}"
 

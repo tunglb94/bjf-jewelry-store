@@ -77,8 +77,17 @@ class OrderAdmin(admin.ModelAdmin):
 
 @admin.register(Banner)
 class BannerAdmin(admin.ModelAdmin):
-    list_display = ('title', 'order', 'is_active')
+    list_display = ('title', 'file_type', 'order', 'is_active')
     list_editable = ('order', 'is_active')
+    fieldsets = (
+        ('Thông tin chung', {
+            'fields': ('title', 'subtitle', 'link', 'is_active', 'order')
+        }),
+        ('Nội dung Banner', {
+            'fields': ('file_type', 'image', 'video_url'),
+            'description': "Chọn loại banner và điền thông tin tương ứng."
+        }),
+    )
 
 @admin.register(ActionButton)
 class ActionButtonAdmin(admin.ModelAdmin):
