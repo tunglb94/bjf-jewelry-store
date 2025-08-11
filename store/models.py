@@ -160,7 +160,6 @@ class ProductVariation(models.Model):
     def __str__(self):
         return f"{self.product.name} - {self.get_variation_type_display()}: {self.variation_name}"
 
-# === DÁN VÀO ĐÂY ===
 class ActionButton(models.Model):
     BUTTON_TYPE_CHOICES = (
         ('zalo', 'Zalo'),
@@ -178,3 +177,19 @@ class ActionButton(models.Model):
 
     def __str__(self):
         return f"{self.get_button_type_display()} - {self.phone_number}"
+
+class Testimonial(models.Model):
+    name = models.CharField(max_length=100, verbose_name="Tên khách hàng")
+    title = models.CharField(max_length=100, verbose_name="Chức danh/Địa chỉ", help_text="Ví dụ: Doanh nhân, TP.HCM")
+    quote = models.TextField(verbose_name="Nội dung nhận xét")
+    image = models.ImageField(upload_to='testimonials/', verbose_name="Ảnh đại diện khách hàng")
+    is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
+    order = models.PositiveIntegerField(default=0, verbose_name="Thứ tự hiển thị")
+
+    class Meta:
+        verbose_name = "Nhận xét của khách hàng"
+        verbose_name_plural = "Các nhận xét của khách hàng"
+        ordering = ['order']
+
+    def __str__(self):
+        return self.name

@@ -2,7 +2,10 @@
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
-from .models import Product, Category, Post, ContactMessage, Order, OrderItem, Banner, ProductVariation, ProductImage
+from .models import (
+    Product, Category, Post, ContactMessage, Order, OrderItem, 
+    Banner, ProductVariation, ProductImage, Testimonial
+)
 from django.views.decorators.http import require_POST
 import json
 
@@ -10,11 +13,15 @@ def home(request):
     featured_products = Product.objects.filter(is_available=True, is_featured=True).order_by('-created_at')[:8]
     categories = Category.objects.all()
     banners = Banner.objects.filter(is_active=True)
+    latest_posts = Post.objects.order_by('-published_date')[:3]
+    testimonials = Testimonial.objects.filter(is_active=True).order_by('order')[:3]
     
     context = {
         'products': featured_products,
         'categories': categories,
         'banners': banners,
+        'latest_posts': latest_posts,
+        'testimonials': testimonials,
     }
     return render(request, 'store/index.html', context)
 
@@ -31,7 +38,6 @@ def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_available=True)
     related_products = Product.objects.filter(category=product.category, is_available=True).exclude(id=product.id)[:4]
     
-    # Logic to group product variations without the 'group_by' filter
     variations = product.variations.all()
     grouped_variations = {}
     for variation in variations:
@@ -40,7 +46,6 @@ def product_detail(request, slug):
             grouped_variations[variation_type_display] = []
         grouped_variations[variation_type_display].append(variation)
 
-    # Lấy tất cả hình ảnh của sản phẩm
     images = product.images.all()
 
     context = {
@@ -82,10 +87,8 @@ def add_to_cart(request):
     product = get_object_or_404(Product, id=product_id)
     cart = request.session.get('cart', {})
     
-    # Lấy giá gốc của sản phẩm
     base_price = product.sale_price if product.sale_price else product.price
 
-    # Lấy các variation được chọn và tính toán lại giá
     variation_price_change = 0
     selected_variations = {}
     for key, value in request.POST.items():
@@ -100,8 +103,6 @@ def add_to_cart(request):
     final_price = base_price + variation_price_change
     main_image = product.images.filter(is_main=True).first()
 
-    # Tạo một key duy nhất cho sản phẩm với các tùy chọn
-    # Ví dụ: '4_gold-1_color-3'
     variation_key = '_'.join([f"{k}-{v}" for k, v in sorted(selected_variations.items())])
     cart_item_key = f"{product_id}-{variation_key}"
 
@@ -143,7 +144,6 @@ def cart_detail(request):
 def remove_from_cart(request, product_id):
     cart = request.session.get('cart', {})
     
-    # Remove all cart items for a given product_id, regardless of variations
     keys_to_delete = [key for key in cart if key.startswith(f"{product_id}-")]
     for key in keys_to_delete:
         del cart[key]

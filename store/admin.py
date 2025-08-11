@@ -2,8 +2,11 @@
 
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
-# Thêm ActionButton vào đây
-from .models import Category, Product, Post, SiteConfiguration, ContactMessage, Order, OrderItem, Banner, ProductVariation, ProductImage, ActionButton
+from .models import (
+    Category, Product, Post, SiteConfiguration, 
+    ContactMessage, Order, OrderItem, Banner, 
+    ProductVariation, ProductImage, ActionButton, Testimonial
+)
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -77,8 +80,12 @@ class BannerAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'is_active')
     list_editable = ('order', 'is_active')
 
-# === DÁN VÀO ĐÂY ===
 @admin.register(ActionButton)
 class ActionButtonAdmin(admin.ModelAdmin):
     list_display = ('button_type', 'phone_number', 'is_active', 'order')
+    list_editable = ('is_active', 'order')
+
+@admin.register(Testimonial)
+class TestimonialAdmin(admin.ModelAdmin):
+    list_display = ('name', 'title', 'is_active', 'order')
     list_editable = ('is_active', 'order')
