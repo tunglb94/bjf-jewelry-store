@@ -6,7 +6,6 @@ from pathlib import Path
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -24,18 +23,19 @@ ALLOWED_HOSTS = ['tunglb941.pythonanywhere.com']
 # Application definition
 
 INSTALLED_APPS = [
-    'jazzmin',  # Thư viện giao diện admin mới, phải đặt ở đầu
+    'jazzmin',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'django.contrib.humanize', # Thư viện định dạng số
-    'solo',                    # Thư viện cho cài đặt chung
-    'store.apps.StoreConfig',  # App chính của chúng ta
-    'ckeditor',                # Thư viện trình soạn thảo nội dung
-    'django_group_by',         # Thư viện groupby cho template
+    'django.contrib.humanize',
+    'solo',
+    'store.apps.StoreConfig',
+    'ckeditor',
+    'ckeditor_uploader', # THÊM DÒNG NÀY ĐỂ CHO PHÉP UPLOAD ẢNH
+    'django_group_by',
 ]
 
 MIDDLEWARE = [
@@ -85,18 +85,10 @@ DATABASES = {
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
-    {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
-    },
-    {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
-    },
+    {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator'},
+    {'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator'},
 ]
 
 
@@ -104,11 +96,8 @@ AUTH_PASSWORD_VALIDATORS = [
 # https://docs.djangoproject.com/en/5.2/topics/i18n/
 
 LANGUAGE_CODE = 'vi'
-
 TIME_ZONE = 'Asia/Ho_Chi_Minh'
-
 USE_I18N = True
-
 USE_TZ = True
 
 
@@ -116,11 +105,8 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles') # Nơi collectstatic sẽ gom file tĩnh vào
-# STATICFILES_DIRS không cần thiết trên production, nhưng có thể giữ lại
-STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static')
-]
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+STATICFILES_DIRS = [os.path.join(BASE_DIR, 'static')]
 
 # Cấu hình cho việc tải lên file (hình ảnh sản phẩm, bài viết)
 MEDIA_URL = '/media/'
@@ -131,3 +117,19 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# === CẤU HÌNH CKEDITOR CHUYÊN NGHIỆP ===
+CKEDITOR_UPLOAD_PATH = "uploads/"
+CKEDITOR_CONFIGS = {
+    'default': {
+        'toolbar': 'full',
+        'height': 300,
+        'width': '100%',
+        'extraPlugins': ','.join([
+            'uploadimage', 'div', 'autolink', 'autoembed', 'embedsemantic',
+            'autogrow', 'widget', 'lineutils', 'clipboard', 'dialog',
+            'dialogui', 'elementspath'
+        ]),
+    },
+}
