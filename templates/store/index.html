@@ -7,7 +7,7 @@
     <div class="swiper hero-slider">
         <div class="swiper-wrapper">
             {% for banner in banners %}
-            <div class.swiper-slide">
+            <div class="swiper-slide">
                 <div class="relative min-h-[85vh] w-full flex items-center overflow-hidden">
                     
                     <div class="absolute inset-0 bg-black bg-opacity-50 z-10"></div>
@@ -229,8 +229,13 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function () {
+        const swiperSlides = document.querySelectorAll('.hero-slider .swiper-slide');
+        
+        // Chỉ bật chế độ lặp (loop) khi có 2 banner trở lên để tránh lỗi nhân bản
+        const enableLoop = swiperSlides.length > 1;
+
         const swiper = new Swiper('.hero-slider', {
-            loop: true,
+            loop: enableLoop,
             autoplay: {
                 delay: {{ settings.slider_delay|default:5 }} * 1000,
                 disableOnInteraction: false,
