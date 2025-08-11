@@ -55,8 +55,6 @@ class Post(models.Model):
     image = models.ImageField(upload_to='posts/', blank=True, null=True, verbose_name="Ảnh bìa")
     published_date = models.DateTimeField(default=timezone.now, verbose_name="Ngày đăng")
     author = models.CharField(max_length=100, default="BJF", verbose_name="Tác giả")
-
-    # Các trường mới cho SEO
     meta_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Tiêu đề SEO")
     meta_description = models.TextField(blank=True, null=True, verbose_name="Mô tả SEO")
     keywords = models.CharField(max_length=255, blank=True, null=True, verbose_name="Từ khóa (keywords)")
@@ -161,3 +159,22 @@ class ProductVariation(models.Model):
 
     def __str__(self):
         return f"{self.product.name} - {self.get_variation_type_display()}: {self.variation_name}"
+
+# === DÁN VÀO ĐÂY ===
+class ActionButton(models.Model):
+    BUTTON_TYPE_CHOICES = (
+        ('zalo', 'Zalo'),
+        ('phone', 'Gọi điện'),
+    )
+    button_type = models.CharField(max_length=10, choices=BUTTON_TYPE_CHOICES, verbose_name="Loại nút")
+    phone_number = models.CharField(max_length=20, verbose_name="Số điện thoại")
+    is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
+    order = models.PositiveIntegerField(default=0, verbose_name="Thứ tự hiển thị")
+
+    class Meta:
+        verbose_name = "Nút hành động"
+        verbose_name_plural = "Các nút hành động"
+        ordering = ['order']
+
+    def __str__(self):
+        return f"{self.get_button_type_display()} - {self.phone_number}"

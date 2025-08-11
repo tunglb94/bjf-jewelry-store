@@ -1,15 +1,17 @@
 # bjf_project/store/context_processors.py
 
-from .models import SiteConfiguration
+from .models import SiteConfiguration, ActionButton
 
 def site_settings(request):
     try:
         settings = SiteConfiguration.objects.get()
     except SiteConfiguration.DoesNotExist:
-        # Nếu chưa có đối tượng cài đặt, trả về một dictionary rỗng
-        # để website không bị lỗi.
         settings = {}
+    
+    # Lấy tất cả các nút hành động đang được kích hoạt
+    action_buttons = ActionButton.objects.filter(is_active=True)
         
     return {
-        'settings': settings
+        'settings': settings,
+        'action_buttons': action_buttons,
     }

@@ -140,5 +140,19 @@
             </div>
         </div>
     </footer>
-</body>
+
+    <div class="fixed bottom-8 right-8 z-50 space-y-4">
+        {% for button in action_buttons %}
+            {% if button.button_type == 'zalo' %}
+                <a href="https://zalo.me/{{ button.phone_number }}" target="_blank" class="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-transform hover:scale-110">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Icon_of_Zalo.svg" alt="Zalo" class="w-8 h-8">
+                </a>
+            {% elif button.button_type == 'phone' %}
+                <a href="tel:{{ button.phone_number }}" class="w-16 h-16 bg-green-500 rounded-full flex items-center justify-center text-white shadow-lg transform transition-transform hover:scale-110">
+                    <i class="ri-phone-fill text-3xl"></i>
+                </a>
+            {% endif %}
+        {% endfor %}
+    </div>
+    </body>
 </html>

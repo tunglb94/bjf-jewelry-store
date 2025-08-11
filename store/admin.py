@@ -2,8 +2,8 @@
 
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
-from .models import Category, Product, Post, SiteConfiguration, ContactMessage, Order, OrderItem, Banner, ProductVariation, ProductImage
-# Thêm ProductImage
+# Thêm ActionButton vào đây
+from .models import Category, Product, Post, SiteConfiguration, ContactMessage, Order, OrderItem, Banner, ProductVariation, ProductImage, ActionButton
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -29,7 +29,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'sku', 'description')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline, ProductVariationInline]
-    # Thêm ProductImageInline để quản lý nhiều ảnh
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -77,3 +76,9 @@ class OrderAdmin(admin.ModelAdmin):
 class BannerAdmin(admin.ModelAdmin):
     list_display = ('title', 'order', 'is_active')
     list_editable = ('order', 'is_active')
+
+# === DÁN VÀO ĐÂY ===
+@admin.register(ActionButton)
+class ActionButtonAdmin(admin.ModelAdmin):
+    list_display = ('button_type', 'phone_number', 'is_active', 'order')
+    list_editable = ('is_active', 'order')
