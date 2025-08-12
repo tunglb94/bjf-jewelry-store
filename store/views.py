@@ -16,6 +16,8 @@ def home(request):
     banners = Banner.objects.filter(is_active=True)
     latest_posts = Post.objects.order_by('-published_date')[:3]
     testimonials = Testimonial.objects.filter(is_active=True).order_by('order')[:3]
+    # Lấy 3 tin tuyển dụng mới nhất
+    latest_jobs = JobPosting.objects.filter(is_active=True).order_by('-published_date')[:3]
     
     context = {
         'products': featured_products,
@@ -23,6 +25,7 @@ def home(request):
         'banners': banners,
         'latest_posts': latest_posts,
         'testimonials': testimonials,
+        'latest_jobs': latest_jobs,
     }
     return render(request, 'store/index.html', context)
 
