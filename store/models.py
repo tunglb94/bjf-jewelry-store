@@ -253,3 +253,26 @@ class AboutPage(SingletonModel):
 
     def __str__(self):
         return "Trang Về Chúng Tôi"
+
+class JobPosting(models.Model):
+    JOB_TYPE_CHOICES = (
+        ('full-time', 'Toàn thời gian'),
+        ('part-time', 'Bán thời gian'),
+        ('internship', 'Thực tập'),
+    )
+    title = models.CharField(max_length=255, verbose_name="Chức danh")
+    slug = models.SlugField(max_length=255, unique=True, help_text="Phần hiển thị trên URL, sẽ được tự động tạo.", verbose_name="Đường dẫn URL", null=True, blank=True)
+    location = models.CharField(max_length=100, verbose_name="Địa điểm làm việc")
+    job_type = models.CharField(max_length=20, choices=JOB_TYPE_CHOICES, verbose_name="Loại hình công việc")
+    description = RichTextField(verbose_name="Mô tả công việc")
+    requirements = RichTextField(verbose_name="Yêu cầu ứng viên")
+    is_active = models.BooleanField(default=True, verbose_name="Đang tuyển?")
+    published_date = models.DateTimeField(default=timezone.now, verbose_name="Ngày đăng")
+
+    class Meta:
+        verbose_name = "Tin tuyển dụng"
+        verbose_name_plural = "Các tin tuyển dụng"
+        ordering = ['-published_date']
+
+    def __str__(self):
+        return self.title

@@ -6,7 +6,7 @@ from .models import (
     Category, Product, Post, SiteConfiguration, 
     ContactMessage, Order, OrderItem, Banner, 
     ProductVariation, ProductImage, ActionButton, Testimonial,
-    AboutPage # Đảm bảo đã import AboutPage
+    AboutPage, JobPosting
 )
 
 @admin.register(Category)
@@ -121,3 +121,11 @@ class AboutPageAdmin(SingletonModelAdmin):
             'fields': ('craftsmanship_title', 'craftsmanship_subtitle')
         }),
     )
+
+@admin.register(JobPosting)
+class JobPostingAdmin(admin.ModelAdmin):
+    list_display = ('title', 'location', 'job_type', 'is_active', 'published_date')
+    list_filter = ('is_active', 'job_type', 'location')
+    search_fields = ('title', 'description', 'requirements')
+    prepopulated_fields = {'slug': ('title',)}
+    list_editable = ('is_active',)

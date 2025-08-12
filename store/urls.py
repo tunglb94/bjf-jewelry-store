@@ -13,6 +13,8 @@ urlpatterns = [
     path('tin-tuc/<slug:slug>/', views.post_detail, name='post_detail'),
     path('lien-he/', views.contact, name='contact'),
     path('ve-chung-toi/', views.about_us, name='about_us'),
+    path('tuyen-dung/', views.recruitment, name='recruitment'),
+    path('tuyen-dung/<slug:slug>/', views.job_detail, name='job_detail'),
     
     # URLs cho giỏ hàng
     path('gio-hang/', views.cart_detail, name='cart_detail'),

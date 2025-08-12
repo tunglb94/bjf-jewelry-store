@@ -5,7 +5,7 @@ from django.contrib import messages
 from .models import (
     Product, Category, Post, ContactMessage, Order, OrderItem, 
     Banner, ProductVariation, ProductImage, Testimonial, ActionButton,
-    AboutPage # Import model mới
+    AboutPage, JobPosting
 )
 from django.views.decorators.http import require_POST
 import json
@@ -197,3 +197,17 @@ def checkout(request):
         total_price += total_item_price
     context = {'cart_items': cart_items, 'total_price': total_price}
     return render(request, 'store/checkout.html', context)
+
+def recruitment(request):
+    job_postings = JobPosting.objects.filter(is_active=True)
+    context = {
+        'job_postings': job_postings
+    }
+    return render(request, 'store/recruitment.html', context)
+
+def job_detail(request, slug):
+    job = get_object_or_404(JobPosting, slug=slug, is_active=True)
+    context = {
+        'job': job
+    }
+    return render(request, 'store/job_detail.html', context)

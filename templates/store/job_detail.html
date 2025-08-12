@@ -1,0 +1,39 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+
+{% block title %}{{ job.title }} - Tuyển Dụng - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl">
+            <div class="mb-8">
+                <h1 class="text-4xl font-bold text-gray-900">{{ job.title }}</h1>
+                <div class="flex items-center text-gray-500 mt-4 space-x-6">
+                    <span><i class="ri-map-pin-line mr-2 text-primary"></i>Địa điểm: <strong>{{ job.location }}</strong></span>
+                    <span><i class="ri-time-line mr-2 text-primary"></i>Loại hình: <strong>{{ job.get_job_type_display }}</strong></span>
+                    <span><i class="ri-calendar-line mr-2 text-primary"></i>Ngày đăng: <strong>{{ job.published_date|date:"d/m/Y" }}</strong></span>
+                </div>
+            </div>
+
+            <div class="prose max-w-none text-gray-600 mb-12">
+                <h2 class="text-2xl font-bold text-gray-800">Mô tả công việc</h2>
+                {{ job.description|safe }}
+            </div>
+
+            <div class="prose max-w-none text-gray-600">
+                <h2 class="text-2xl font-bold text-gray-800">Yêu cầu ứng viên</h2>
+                {{ job.requirements|safe }}
+            </div>
+            
+            <div class="mt-12 pt-8 border-t">
+                 <h2 class="text-2xl font-bold text-gray-800 mb-4">Nộp hồ sơ</h2>
+                 <p class="text-gray-600 mb-4">Vui lòng gửi CV và thư xin việc của bạn về địa chỉ email: <a href="mailto:tuyendung@bjf.com" class="text-primary font-bold">tuyendung@bjf.com</a> với tiêu đề "[Ứng tuyển] - {{ job.title }} - [Họ và tên của bạn]".</p>
+                 <a href="mailto:tuyendung@bjf.com?subject=Ứng tuyển - {{ job.title }}" class="inline-block bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                    Ứng tuyển ngay
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
