@@ -5,89 +5,73 @@
 {% block content %}
 <div class="relative bg-gray-900">
     <div class="absolute inset-0">
-        {% if about_page.hero_image %}
-            <img class="w-full h-full object-cover" src="{{ about_page.hero_image.url }}" alt="Xưởng chế tác trang sức BJF">
-        {% else %}
-            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1588444650739-fa1968691513?q=80&w=2070&auto=format&fit=crop" alt="Xưởng chế tác trang sức BJF">
-        {% endif %}
+        <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1588444650739-fa1968691513?q=80&w=2070&auto=format&fit=crop" alt="Xưởng chế tác trang sức BJF">
         <div class="absolute inset-0 bg-black opacity-60"></div>
     </div>
     <div class="relative max-w-7xl mx-auto py-32 px-6 lg:px-8 text-center text-white">
-        <h1 class="text-5xl md:text-7xl font-bold tracking-tight">{{ about_page.hero_title }}</h1>
-        <p class="mt-6 text-xl md:text-2xl max-w-3xl mx-auto">{{ about_page.hero_subtitle }}</p>
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight">Câu Chuyện Về BJF</h1>
+        <p class="mt-6 text-xl md:text-2xl max-w-3xl mx-auto">Nơi mỗi tuyệt tác không chỉ là trang sức, mà là di sản của đam mê và sự tinh xảo.</p>
     </div>
 </div>
 
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div class="lg:pr-8">
-                <p class="font-semibold text-primary uppercase">{{ about_page.philosophy_tagline }}</p>
-                <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.philosophy_title }}</h2>
-                <p class="mt-8 text-lg text-gray-600">{{ about_page.philosophy_content|linebreaks }}</p>
+        <div class="text-center">
+            <p class="font-semibold text-primary uppercase">Giá Trị Của Chúng Tôi</p>
+            <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Nền Tảng Tạo Nên Đẳng Cấp</h2>
+            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">Tại BJF, chúng tôi tin rằng giá trị thực sự của một thương hiệu nằm ở những cam kết bền vững.</p>
+        </div>
+        <div class="mt-20 grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-award-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Chất Lượng Tuyệt Hảo</h3>
+                <p class="text-gray-600">Chúng tôi cam kết chỉ sử dụng những vật liệu quý hiếm, từ vàng đủ tuổi đến những viên kim cương được kiểm định bởi các tổ chức uy tín nhất thế giới như GIA.</p>
             </div>
-            <div class="h-96 w-full">
-                {% if about_page.philosophy_image %}
-                    <img class="h-full w-full object-cover rounded-2xl shadow-xl" src="{{ about_page.philosophy_image.url }}" alt="Triết lý của BJF">
-                {% else %}
-                     <img class="h-full w-full object-cover rounded-2xl shadow-xl" src="https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070" alt="Triết lý của BJF">
-                {% endif %}
+            <div>
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-lightbulb-flash-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Sáng Tạo Vượt Bậc</h3>
+                <p class="text-gray-600">Đội ngũ thiết kế của BJF không ngừng tìm tòi, kết hợp giữa kỹ thuật chế tác truyền thống và xu hướng hiện đại để tạo ra những sản phẩm độc đáo, tôn vinh phong cách cá nhân.</p>
+            </div>
+            <div>
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-shake-hands-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Trải Nghiệm Tận Tâm</h3>
+                <p class="text-gray-600">Từ khoảnh khắc bạn bước vào showroom đến dịch vụ hậu mãi trọn đời, chúng tôi mong muốn mang đến một trải nghiệm mua sắm sang trọng và đáng tin cậy.</p>
             </div>
         </div>
     </div>
 </section>
 
-<section class="py-24 bg-gray-50">
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.history_title }}</h2>
-            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">{{ about_page.history_subtitle }}</p>
+<section class="bg-gray-50 overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+            <div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center">
+                <p class="font-semibold text-primary uppercase">Nghệ Thuật Chế Tác</p>
+                <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Từ Ý Tưởng Đến Tuyệt Tác</h2>
+                <p class="mt-6 text-lg leading-8 text-gray-600">Mỗi sản phẩm tại BJF là kết tinh của một quy trình chế tác tỉ mỉ, đòi hỏi hàng trăm giờ lao động của những người thợ kim hoàn bậc thầy. Chúng tôi bắt đầu với bản phác thảo 2D, dựng mô hình 3D chi tiết, sau đó lựa chọn từng viên đá quý hoàn hảo và cuối cùng là hoàn thiện sản phẩm bằng tay để đảm bảo độ chính xác và vẻ đẹp hoàn mỹ nhất.</p>
+            </div>
+            <div class="h-80 lg:h-auto">
+                 <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1610495393931-78971337e5b2?q=80&w=1964&auto=format&fit=crop" alt="Quy trình chế tác trang sức">
+            </div>
         </div>
-        <div class="mt-20 space-y-16">
-            <div class="relative flex items-center">
-                <div class="hidden md:block w-1/2 pr-8">
-                    {% if about_page.milestone1_image %}
-                    <img src="{{ about_page.milestone1_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone1_year }}">
-                    {% endif %}
-                </div>
-                <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
-                <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">1</div>
-                <div class="w-full md:w-1/2 md:pl-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone1_year }}</p>
-                        <p class="mt-2 text-gray-600">{{ about_page.milestone1_text }}</p>
-                    </div>
-                </div>
+    </div>
+</section>
+
+<section class="bg-white overflow-hidden">
+    <div class="max-w-7xl mx-auto">
+        <div class="grid grid-cols-1 lg:grid-cols-2">
+             <div class="h-80 lg:h-auto lg:order-2">
+                 <img class="h-full w-full object-cover" src="https://images.unsplash.com/photo-1560250097-0b93528c311a?q=80&w=1974&auto=format&fit=crop" alt="Người sáng lập BJF">
             </div>
-            <div class="relative flex items-center">
-                <div class="w-full md:w-1/2 md:pr-8 text-right md:order-2">
-                    <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone2_year }}</p>
-                        <p class="mt-2 text-gray-600">{{ about_page.milestone2_text }}</p>
-                    </div>
-                </div>
-                <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
-                <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">2</div>
-                <div class="w-full md:w-1/2 md:pl-8 md:order-1">
-                    {% if about_page.milestone2_image %}
-                    <img src="{{ about_page.milestone2_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone2_year }}">
-                    {% endif %}
-                </div>
-            </div>
-            <div class="relative flex items-center">
-                <div class="hidden md:block w-1/2 pr-8">
-                     {% if about_page.milestone3_image %}
-                    <img src="{{ about_page.milestone3_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone3_year }}">
-                    {% endif %}
-                </div>
-                <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
-                <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">3</div>
-                <div class="w-full md:w-1/2 md:pl-8">
-                    <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone3_year }}</p>
-                        <p class="mt-2 text-gray-600">{{ about_page.milestone3_text }}</p>
-                    </div>
-                </div>
+            <div class="p-8 md:p-12 lg:p-16 flex flex-col justify-center lg:order-1">
+                <p class="font-semibold text-primary uppercase">Người Sáng Lập</p>
+                <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Tâm Huyết & Tầm Nhìn</h2>
+                <p class="mt-6 text-lg leading-8 text-gray-600">Với hơn 20 năm kinh nghiệm trong ngành kim hoàn, nhà sáng lập của chúng tôi đã xây dựng BJF với một tầm nhìn duy nhất: tạo ra những sản phẩm trang sức Việt Nam có thể sánh ngang với các thương hiệu quốc tế. Niềm tin vào tay nghề thủ công Việt và tình yêu với vẻ đẹp của đá quý là kim chỉ nam cho mọi hoạt động của chúng tôi.</p>
             </div>
         </div>
     </div>
@@ -96,32 +80,32 @@
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.craftsmanship_title }}</h2>
-            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">{{ about_page.craftsmanship_subtitle }}</p>
+            <h2 class="animate__animated animate__fadeInDown text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Nghệ Thuật Chế Tác Đỉnh Cao</h2>
+            <p class="animate__animated animate__fadeIn mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">Mỗi sản phẩm là một bản giao hưởng của vật liệu quý hiếm và bàn tay tài hoa của nghệ nhân.</p>
         </div>
         <div class="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div class="flex flex-col items-center text-center">
+            <div class="animate__animated animate__fadeInUp flex flex-col items-center text-center" style="animation-delay: 0.2s;">
                 <div class="p-4 bg-orange-100 rounded-full">
                     <i class="ri-search-eye-line text-4xl text-primary"></i>
                 </div>
                 <h3 class="mt-5 text-xl font-semibold text-gray-900">Tuyển Chọn</h3>
                 <p class="mt-2 text-gray-600">Chỉ những viên kim cương và đá quý đạt tiêu chuẩn khắt khe về độ tinh khiết, màu sắc và giác cắt mới được lựa chọn.</p>
             </div>
-            <div class="flex flex-col items-center text-center">
+            <div class="animate__animated animate__fadeInUp flex flex-col items-center text-center" style="animation-delay: 0.4s;">
                 <div class="p-4 bg-orange-100 rounded-full">
                     <i class="ri-draft-line text-4xl text-primary"></i>
                 </div>
                 <h3 class="mt-5 text-xl font-semibold text-gray-900">Thiết Kế</h3>
                 <p class="mt-2 text-gray-600">Từ cảm hứng ban đầu, các nhà thiết kế của chúng tôi phác thảo và dựng mô hình 3D để hiện thực hóa ý tưởng một cách hoàn hảo.</p>
             </div>
-            <div class="flex flex-col items-center text-center">
+            <div class="animate__animated animate__fadeInUp flex flex-col items-center text-center" style="animation-delay: 0.6s;">
                 <div class="p-4 bg-orange-100 rounded-full">
                     <i class="ri-tools-line text-4xl text-primary"></i>
                 </div>
                 <h3 class="mt-5 text-xl font-semibold text-gray-900">Chế Tác</h3>
                 <p class="mt-2 text-gray-600">Bằng kỹ thuật thủ công bậc thầy, các nghệ nhân kim hoàn thổi hồn vào kim loại quý, tạo nên những tác phẩm tinh xảo đến từng chi tiết.</p>
             </div>
-            <div class="flex flex-col items-center text-center">
+            <div class="animate__animated animate__fadeInUp flex flex-col items-center text-center" style="animation-delay: 0.8s;">
                 <div class="p-4 bg-orange-100 rounded-full">
                     <i class="ri-shield-check-line text-4xl text-primary"></i>
                 </div>
