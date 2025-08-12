@@ -5,7 +5,8 @@ from solo.admin import SingletonModelAdmin
 from .models import (
     Category, Product, Post, SiteConfiguration, 
     ContactMessage, Order, OrderItem, Banner, 
-    ProductVariation, ProductImage, ActionButton, Testimonial
+    ProductVariation, ProductImage, ActionButton, Testimonial,
+    AboutPage # Đảm bảo đã import AboutPage
 )
 
 @admin.register(Category)
@@ -98,3 +99,25 @@ class ActionButtonAdmin(admin.ModelAdmin):
 class TestimonialAdmin(admin.ModelAdmin):
     list_display = ('name', 'title', 'is_active', 'order')
     list_editable = ('is_active', 'order')
+
+@admin.register(AboutPage)
+class AboutPageAdmin(SingletonModelAdmin):
+    fieldsets = (
+        ('Section Hero', {
+            'fields': ('hero_title', 'hero_subtitle', 'hero_image')
+        }),
+        ('Section Triết lý', {
+            'fields': ('philosophy_tagline', 'philosophy_title', 'philosophy_content', 'philosophy_image')
+        }),
+        ('Section Lịch sử', {
+            'fields': (
+                'history_title', 'history_subtitle',
+                'milestone1_year', 'milestone1_text', 'milestone1_image',
+                'milestone2_year', 'milestone2_text', 'milestone2_image',
+                'milestone3_year', 'milestone3_text', 'milestone3_image',
+            )
+        }),
+         ('Section Chế tác', {
+            'fields': ('craftsmanship_title', 'craftsmanship_subtitle')
+        }),
+    )
