@@ -5,12 +5,16 @@
 {% block content %}
 <div class="relative bg-gray-900">
     <div class="absolute inset-0">
-        <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1588444650739-fa1968691513?q=80&w=2070&auto=format&fit=crop" alt="Xưởng chế tác trang sức BJF">
+        {% if about_page.hero_image %}
+            <img class="w-full h-full object-cover" src="{{ about_page.hero_image.url }}" alt="Xưởng chế tác trang sức BJF">
+        {% else %}
+            <img class="w-full h-full object-cover" src="https://images.unsplash.com/photo-1588444650739-fa1968691513?q=80&w=2070&auto=format&fit=crop" alt="Xưởng chế tác trang sức BJF">
+        {% endif %}
         <div class="absolute inset-0 bg-black opacity-60"></div>
     </div>
     <div class="relative max-w-7xl mx-auto py-32 px-6 lg:px-8 text-center text-white">
-        <h1 class="text-5xl md:text-7xl font-bold tracking-tight">Câu Chuyện Về BJF</h1>
-        <p class="mt-6 text-xl md:text-2xl max-w-3xl mx-auto">Nơi mỗi tuyệt tác không chỉ là trang sức, mà là di sản của đam mê và sự tinh xảo.</p>
+        <h1 class="text-5xl md:text-7xl font-bold tracking-tight">{{ about_page.hero_title }}</h1>
+        <p class="mt-6 text-xl md:text-2xl max-w-3xl mx-auto">{{ about_page.hero_subtitle }}</p>
     </div>
 </div>
 
@@ -18,13 +22,16 @@
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div class="lg:pr-8">
-                <p class="font-semibold text-primary uppercase">Triết Lý Của Chúng Tôi</p>
-                <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Tôn Vinh Vẻ Đẹp Vĩnh Cửu</h2>
-                <p class="mt-8 text-lg text-gray-600">Tại BJF, chúng tôi tin rằng trang sức là ngôn ngữ của cảm xúc, là vật chứng cho những cột mốc đáng nhớ trong cuộc đời. Sứ mệnh của chúng tôi không chỉ dừng lại ở việc chế tác ra những món đồ quý giá, mà còn là kiến tạo nên những biểu tượng mang giá trị vượt thời gian, đồng hành cùng bạn trên hành trình khẳng định bản thân và lưu giữ những ký ức đẹp đẽ nhất.</p>
-                <p class="mt-6 text-lg text-gray-600">Mỗi thiết kế đều được thổi hồn từ những câu chuyện, từ cảm hứng bất tận về thiên nhiên và con người Việt Nam, kết hợp hài hòa giữa nét đẹp truyền thống và hơi thở đương đại.</p>
+                <p class="font-semibold text-primary uppercase">{{ about_page.philosophy_tagline }}</p>
+                <h2 class="mt-2 text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.philosophy_title }}</h2>
+                <p class="mt-8 text-lg text-gray-600">{{ about_page.philosophy_content|linebreaks }}</p>
             </div>
             <div class="h-96 w-full">
-                <img class="h-full w-full object-cover rounded-2xl shadow-xl" src="https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070" alt="Trang sức tinh xảo của BJF">
+                {% if about_page.philosophy_image %}
+                    <img class="h-full w-full object-cover rounded-2xl shadow-xl" src="{{ about_page.philosophy_image.url }}" alt="Triết lý của BJF">
+                {% else %}
+                     <img class="h-full w-full object-cover rounded-2xl shadow-xl" src="https://images.unsplash.com/photo-1611859421235-9a67445a6534?q=80&w=2070" alt="Triết lý của BJF">
+                {% endif %}
             </div>
         </div>
     </div>
@@ -33,46 +40,52 @@
 <section class="py-24 bg-gray-50">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Dấu Ấn Qua Từng Thời Kỳ</h2>
-            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">Hơn hai thập kỷ không ngừng nỗ lực để xây dựng một thương hiệu trang sức Việt Nam uy tín và đẳng cấp.</p>
+            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.history_title }}</h2>
+            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">{{ about_page.history_subtitle }}</p>
         </div>
         <div class="mt-20 space-y-16">
             <div class="relative flex items-center">
                 <div class="hidden md:block w-1/2 pr-8">
-                    <img src="https://images.unsplash.com/photo-1552519507-da3b142c6e3d?q=80&w=2070" class="rounded-2xl shadow-xl w-full object-cover" alt="Xưởng chế tác đầu tiên">
+                    {% if about_page.milestone1_image %}
+                    <img src="{{ about_page.milestone1_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone1_year }}">
+                    {% endif %}
                 </div>
                 <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
                 <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">1</div>
                 <div class="w-full md:w-1/2 md:pl-8">
                     <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">2005: Khởi Đầu Đam Mê</p>
-                        <p class="mt-2 text-gray-600">BJF ra đời từ một xưởng chế tác nhỏ với những người thợ kim hoàn lành nghề, mang trong mình hoài bão tạo ra những sản phẩm trang sức tinh xảo cho người Việt.</p>
+                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone1_year }}</p>
+                        <p class="mt-2 text-gray-600">{{ about_page.milestone1_text }}</p>
                     </div>
                 </div>
             </div>
             <div class="relative flex items-center">
                 <div class="w-full md:w-1/2 md:pr-8 text-right md:order-2">
                     <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">2015: Khẳng Định Vị Thế</p>
-                        <p class="mt-2 text-gray-600">Trở thành một trong những thương hiệu được tin cậy hàng đầu, khai trương showroom flagship đầu tiên và ra mắt bộ sưu tập kim cương đạt chuẩn GIA.</p>
+                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone2_year }}</p>
+                        <p class="mt-2 text-gray-600">{{ about_page.milestone2_text }}</p>
                     </div>
                 </div>
                 <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
                 <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">2</div>
                 <div class="w-full md:w-1/2 md:pl-8 md:order-1">
-                    <img src="https://images.unsplash.com/photo-1590973836187-502a3a5a855a?q=80&w=2070" class="rounded-2xl shadow-xl w-full object-cover" alt="Showroom flagship của BJF">
+                    {% if about_page.milestone2_image %}
+                    <img src="{{ about_page.milestone2_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone2_year }}">
+                    {% endif %}
                 </div>
             </div>
             <div class="relative flex items-center">
                 <div class="hidden md:block w-1/2 pr-8">
-                    <img src="https://images.unsplash.com/photo-1516542617459-7a36b95b3a3c?q=80&w=2070" class="rounded-2xl shadow-xl w-full object-cover" alt="BJF vươn ra quốc tế">
+                     {% if about_page.milestone3_image %}
+                    <img src="{{ about_page.milestone3_image.url }}" class="rounded-2xl shadow-xl w-full object-cover" alt="{{ about_page.milestone3_year }}">
+                    {% endif %}
                 </div>
                 <div class="hidden md:block absolute h-full border-l-2 border-primary left-1/2 transform -translate-x-1/2"></div>
                 <div class="bg-primary w-8 h-8 rounded-full absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center text-white font-bold">3</div>
                 <div class="w-full md:w-1/2 md:pl-8">
                     <div class="bg-white p-6 rounded-2xl shadow-xl">
-                        <p class="text-xl font-bold text-gray-900">2025: Vươn Ra Thế Giới</p>
-                        <p class="mt-2 text-gray-600">Ra mắt nền tảng thương mại điện tử, mang những tuyệt tác trang sức của BJF đến với khách hàng trên toàn thế giới, khẳng định chất lượng và tay nghề chế tác của Việt Nam.</p>
+                        <p class="text-xl font-bold text-gray-900">{{ about_page.milestone3_year }}</p>
+                        <p class="mt-2 text-gray-600">{{ about_page.milestone3_text }}</p>
                     </div>
                 </div>
             </div>
@@ -83,8 +96,8 @@
 <section class="py-24 bg-white">
     <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="text-center">
-            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">Nghệ Thuật Chế Tác Đỉnh Cao</h2>
-            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">Mỗi sản phẩm là một bản giao hưởng của vật liệu quý hiếm và bàn tay tài hoa của nghệ nhân.</p>
+            <h2 class="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">{{ about_page.craftsmanship_title }}</h2>
+            <p class="mt-6 text-lg leading-8 text-gray-600 max-w-2xl mx-auto">{{ about_page.craftsmanship_subtitle }}</p>
         </div>
         <div class="mt-20 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             <div class="flex flex-col items-center text-center">
