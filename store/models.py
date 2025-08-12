@@ -215,3 +215,41 @@ class Testimonial(models.Model):
 
     def __str__(self):
         return self.name
+
+class AboutPage(SingletonModel):
+    # Section Hero
+    hero_title = models.CharField(max_length=200, default="Câu Chuyện Về BJF", verbose_name="Tiêu đề chính")
+    hero_subtitle = models.CharField(max_length=300, default="Nơi mỗi tuyệt tác không chỉ là trang sức, mà là di sản của đam mê và sự tinh xảo.", verbose_name="Tiêu đề phụ")
+    hero_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Ảnh nền Hero")
+
+    # Section Triết lý
+    philosophy_tagline = models.CharField(max_length=100, default="Triết Lý Của Chúng Tôi", verbose_name="Dòng giới thiệu Triết lý")
+    philosophy_title = models.CharField(max_length=200, default="Tôn Vinh Vẻ Đẹp Vĩnh Cửu", verbose_name="Tiêu đề Triết lý")
+    philosophy_content = models.TextField(default="Tại BJF, chúng tôi tin rằng trang sức là ngôn ngữ của cảm xúc...", verbose_name="Nội dung Triết lý")
+    philosophy_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Ảnh Triết lý")
+
+    # Section Lịch sử
+    history_title = models.CharField(max_length=200, default="Dấu Ấn Qua Từng Thời Kỳ", verbose_name="Tiêu đề Lịch sử")
+    history_subtitle = models.CharField(max_length=300, default="Hơn hai thập kỷ không ngừng nỗ lực để xây dựng một thương hiệu trang sức Việt Nam uy tín và đẳng cấp.", verbose_name="Tiêu đề phụ Lịch sử")
+    
+    milestone1_year = models.CharField(max_length=50, default="2005: Khởi Đầu Đam Mê", verbose_name="Cột mốc 1 - Năm & Tiêu đề")
+    milestone1_text = models.TextField(default="BJF ra đời từ một xưởng chế tác nhỏ...", verbose_name="Cột mốc 1 - Nội dung")
+    milestone1_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 1 - Ảnh")
+
+    milestone2_year = models.CharField(max_length=50, default="2015: Khẳng Định Vị Thế", verbose_name="Cột mốc 2 - Năm & Tiêu đề")
+    milestone2_text = models.TextField(default="Trở thành một trong những thương hiệu được tin cậy hàng đầu...", verbose_name="Cột mốc 2 - Nội dung")
+    milestone2_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 2 - Ảnh")
+    
+    milestone3_year = models.CharField(max_length=50, default="2025: Vươn Ra Thế Giới", verbose_name="Cột mốc 3 - Năm & Tiêu đề")
+    milestone3_text = models.TextField(default="Ra mắt nền tảng thương mại điện tử...", verbose_name="Cột mốc 3 - Nội dung")
+    milestone3_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 3 - Ảnh")
+    
+    # Section Chế tác
+    craftsmanship_title = models.CharField(max_length=200, default="Nghệ Thuật Chế Tác Đỉnh Cao", verbose_name="Tiêu đề Chế tác")
+    craftsmanship_subtitle = models.CharField(max_length=300, default="Mỗi sản phẩm là một bản giao hưởng của vật liệu quý hiếm và bàn tay tài hoa của nghệ nhân.", verbose_name="Tiêu đề phụ Chế tác")
+
+    class Meta:
+        verbose_name = "Trang Về Chúng Tôi"
+
+    def __str__(self):
+        return "Trang Về Chúng Tôi"

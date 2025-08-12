@@ -4,7 +4,8 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import (
     Product, Category, Post, ContactMessage, Order, OrderItem, 
-    Banner, ProductVariation, ProductImage, Testimonial, ActionButton
+    Banner, ProductVariation, ProductImage, Testimonial, ActionButton,
+    AboutPage # Import model mới
 )
 from django.views.decorators.http import require_POST
 import json
@@ -26,10 +27,12 @@ def home(request):
     return render(request, 'store/index.html', context)
 
 def about_us(request):
-    """
-    View cho trang Về Chúng Tôi.
-    """
-    return render(request, 'store/about.html')
+    # Lấy đối tượng trang About Us (vì là singleton nên chỉ có 1)
+    about_page_content = AboutPage.objects.get()
+    context = {
+        'about_page': about_page_content
+    }
+    return render(request, 'store/about.html', context)
 
 def product_list(request):
     products = Product.objects.filter(is_available=True)
