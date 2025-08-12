@@ -1,0 +1,70 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}Về Chúng Tôi - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="relative h-96 bg-gray-800 flex items-center justify-center text-white">
+    <img src="https://images.unsplash.com/photo-1599354605398-faf70c48a104?q=80&w=2070&auto=format&fit=crop" class="absolute inset-0 w-full h-full object-cover opacity-30" alt="Xưởng chế tác BJF">
+    <div class="relative z-10 text-center">
+        <h1 class="text-5xl font-bold">Câu Chuyện Về BJF</h1>
+        <p class="text-xl mt-4">Nơi mỗi tuyệt tác trang sức đều mang một linh hồn.</p>
+    </div>
+</div>
+
+<section class="py-20 bg-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 grid md:grid-cols-2 gap-16 items-center">
+        <div>
+            <h2 class="text-4xl font-bold text-gray-900 mb-6">Hành Trình Chế Tác Đam Mê</h2>
+            <p class="text-gray-600 mb-4 text-lg">
+                BJF được thành lập từ niềm đam mê bất tận với vẻ đẹp vĩnh cửu của đá quý và kim hoàn. Chúng tôi tin rằng trang sức không chỉ là một phụ kiện, mà còn là một di sản, một câu chuyện được kể qua nhiều thế hệ.
+            </p>
+            <p class="text-gray-600 text-lg">
+                Từ những viên đá thô được tuyển chọn kỹ lưỡng nhất, qua bàn tay tài hoa của các nghệ nhân hàng đầu, mỗi sản phẩm của BJF ra đời đều là một tác phẩm nghệ thuật độc đáo, chứa đựng tâm huyết và sự sáng tạo không ngừng nghỉ.
+            </p>
+        </div>
+        <div>
+            <img src="https://images.unsplash.com/photo-1610495393931-78971337e5b2?q=80&w=1964&auto=format&fit=crop" class="rounded-2xl shadow-xl w-full h-full object-cover" alt="Nghệ nhân BJF">
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold text-gray-900 mb-4">Sứ Mệnh Của Chúng Tôi</h2>
+        <p class="text-xl text-gray-600 mb-12 max-w-3xl mx-auto">BJF không ngừng nỗ lực để mang đến những giá trị vượt trội, kiến tạo nên một thương hiệu trang sức Việt Nam đẳng cấp quốc tế.</p>
+        <div class="grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-award-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Chất Lượng Tuyệt Hảo</h3>
+                <p class="text-gray-600">Cam kết về nguồn gốc và chất lượng trong từng sản phẩm, với đầy đủ chứng nhận kiểm định quốc tế.</p>
+            </div>
+            <div>
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-lightbulb-flash-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Sáng Tạo Vượt Bậc</h3>
+                <p class="text-gray-600">Luôn tiên phong trong việc tạo ra những thiết kế độc đáo, tôn vinh vẻ đẹp và phong cách cá nhân của khách hàng.</p>
+            </div>
+            <div>
+                <div class="w-20 h-20 mx-auto mb-6 gradient-bg rounded-full flex items-center justify-center">
+                    <i class="ri-shake-hands-line text-4xl text-white"></i>
+                </div>
+                <h3 class="text-2xl font-semibold text-gray-900 mb-3">Trải Nghiệm Tận Tâm</h3>
+                <p class="text-gray-600">Mang đến dịch vụ tư vấn chuyên nghiệp và chính sách hậu mãi trọn đời, xây dựng niềm tin bền vững.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="py-20 bg-white">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-4xl font-bold text-gray-900 mb-6">Khám Phá Bộ Sưu Tập Của BJF</h2>
+        <p class="text-xl text-gray-600 mb-8">Hãy để chúng tôi giúp bạn tìm thấy món trang sức hoàn hảo để ghi dấu những khoảnh khắc quý giá.</p>
+        <a href="{% url 'store:product_list' %}" class="bg-primary hover:bg-secondary text-white px-10 py-4 rounded-full font-semibold text-lg transition-colors duration-200">
+            Xem Tất Cả Sản Phẩm
+        </a>
+    </div>
+</section>
+{% endblock %}

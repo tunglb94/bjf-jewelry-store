@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import (
     Product, Category, Post, ContactMessage, Order, OrderItem, 
-    Banner, ProductVariation, ProductImage, Testimonial
+    Banner, ProductVariation, ProductImage, Testimonial, ActionButton
 )
 from django.views.decorators.http import require_POST
 import json
@@ -24,6 +24,12 @@ def home(request):
         'testimonials': testimonials,
     }
     return render(request, 'store/index.html', context)
+
+def about_us(request):
+    """
+    View cho trang Về Chúng Tôi.
+    """
+    return render(request, 'store/about.html')
 
 def product_list(request):
     products = Product.objects.filter(is_available=True)

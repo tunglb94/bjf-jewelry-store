@@ -3,7 +3,6 @@
 from django.urls import path
 from . import views
 
-# Dòng này rất quan trọng để định danh nhóm URL này
 app_name = 'store'
 
 urlpatterns = [
@@ -13,6 +12,7 @@ urlpatterns = [
     path('tin-tuc/', views.post_list, name='post_list'),
     path('tin-tuc/<slug:slug>/', views.post_detail, name='post_detail'),
     path('lien-he/', views.contact, name='contact'),
+    path('ve-chung-toi/', views.about_us, name='about_us'),
     
     # URLs cho giỏ hàng
     path('gio-hang/', views.cart_detail, name='cart_detail'),

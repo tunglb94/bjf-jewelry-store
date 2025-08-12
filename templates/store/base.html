@@ -70,6 +70,7 @@
                 <nav class="hidden md:flex space-x-8">
                     <a href="{% url 'store:home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Trang chủ</a>
                     <a href="{% url 'store:product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Sản phẩm</a>
+                    <a href="{% url 'store:about_us' %}" class="{% if request.resolver_match.url_name == 'about_us' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Về Chúng Tôi</a>
                     <a href="{% url 'store:post_list' %}" class="{% if request.resolver_match.url_name == 'post_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Tin tức</a>
                     <a href="{% url 'store:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Liên hệ</a>
                 </nav>
@@ -98,12 +99,12 @@
             <nav class="flex flex-col space-y-6 mt-12">
                 <a href="{% url 'store:home' %}" class="text-white hover:text-yellow-200">Trang chủ</a>
                 <a href="{% url 'store:product_list' %}" class="text-white hover:text-yellow-200">Sản phẩm</a>
+                <a href="{% url 'store:about_us' %}" class="text-white hover:text-yellow-200">Về Chúng Tôi</a>
                 <a href="{% url 'store:post_list' %}" class="text-white hover:text-yellow-200">Tin tức</a>
                 <a href="{% url 'store:contact' %}" class="text-white hover:text-yellow-200">Liên hệ</a>
             </nav>
         </div>
     </div>
-
 
     <main>
         {% if messages %}
@@ -192,7 +193,6 @@
                 mobileMenu.classList.add('-translate-x-full');
             });
             
-            // Tùy chọn: Đóng menu khi click ra ngoài
             mobileMenu.addEventListener('click', function (event) {
                 if (event.target === mobileMenu) {
                     mobileMenu.classList.add('-translate-x-full');
