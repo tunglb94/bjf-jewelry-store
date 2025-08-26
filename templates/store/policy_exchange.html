@@ -1,0 +1,184 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}Chính Sách Thu - Đổi - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl prose max-w-none">
+            <h1 class="text-center">CHÍNH SÁCH THU – ĐỔI SẢN PHẨM</h1>
+            <p class="text-center text-sm text-gray-500">Mã: 01/CSTĐ/PKD | Lần ban hành: 01 | Ngày ban hành: 01/08/2025</p>
+
+            <div class="mt-8">
+                <h2>1. Định nghĩa chính sách</h2>
+                <ul>
+                    <li><strong>Tỷ lệ MUA LẠI:</strong> Khách hàng bán đứt các sản phẩm lại cho BJF, hoặc đổi sang sản phẩm mới có giá trị thấp hơn giá trị sản phẩm cũ.</li>
+                    <li><strong>Tỷ lệ ĐỔI:</strong> Khách hàng đổi các sản phẩm cũ sang các sản phẩm mới phải có giá bằng hoặc cao hơn giá trị các sản phẩm cũ.</li>
+                </ul>
+                <p><strong>Lưu ý:</strong> Giá trị sản phẩm được tính là giá sau chiết khấu.</p>
+            </div>
+
+            <div>
+                <h2>2. Nội dung chi tiết</h2>
+                <h3>2.1. Trang sức các loại (không bao gồm ngọc trai & kim cương rời)</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>CHỦNG LOẠI</th>
+                                <th>TỶ LỆ MUA LẠI</th>
+                                <th>TỶ LỆ ĐỔI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Trang sức/ Vỏ Kim Cương</td>
+                                <td class="text-center">-20%</td>
+                                <td class="text-center">-15%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Trang sức đính đá Cao Cấp, CVD, trang sức trơn</td>
+                                <td class="text-center">-30%</td>
+                                <td class="text-center">-20%</td>
+                            </tr>
+                             <tr>
+                                <td>3</td>
+                                <td>Dây chuyền Ý</td>
+                                <td class="text-center">-25%</td>
+                                <td class="text-center">-15%</td>
+                            </tr>
+                             <tr>
+                                <td>4</td>
+                                <td>Trang sức Đá màu</td>
+                                <td class="text-center">-25%</td>
+                                <td class="text-center">-15%</td>
+                            </tr>
+                             <tr>
+                                <td>5</td>
+                                <td>Trang sức đổi Kim cương rời</td>
+                                <td colspan="2" class="text-center">-15%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <p class="mt-4"><strong>Điều kiện:</strong> Đối với trang sức kim cương, kim cương phải còn nguyên vẹn, không trầy, xước, nứt, mẻ.</p>
+            </div>
+            
+            <div class="mt-8">
+                <h3>2.2. Kim cương rời</h3>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>CHỦNG LOẠI</th>
+                                <th>TỶ LỆ MUA LẠI</th>
+                                <th>TỶ LỆ ĐỔI</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td><strong>Kim cương tròn, trắng - Clarity FL, IF, VVS1, VVS2, VSI</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            <tr>
+                                <td>1.1</td>
+                                <td>Trên 10ly</td>
+                                <td colspan="2" class="text-center">Xin chỉ đạo từ Ban Tổng Giám Đốc</td>
+                            </tr>
+                            <tr>
+                                <td>1.2</td>
+                                <td>Trên 8.6 ly đến 10 ly</td>
+                                <td class="text-center">Trong vòng 1 năm: -7%<br>Trên 1 năm: -10%</td>
+                                <td class="text-center">Trong vòng 1 năm: -7%<br>Trên 1 năm: -10%</td>
+                            </tr>
+                             <tr>
+                                <td>1.3</td>
+                                <td>Từ 6.0 ly đến 8.6 ly</td>
+                                <td class="text-center">-5%</td>
+                                <td class="text-center">-2%</td>
+                            </tr>
+                            <tr>
+                                <td>1.4</td>
+                                <td>Từ 5.0 ly đến dưới 6.0 ly</td>
+                                <td class="text-center">-7%</td>
+                                <td class="text-center">-3%</td>
+                            </tr>
+                            <tr>
+                                <td>1.5</td>
+                                <td>Dưới 5.0 ly</td>
+                                <td class="text-center">-7%</td>
+                                <td class="text-center">-5%</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td><strong>Kim cương tròn, trắng - Clarity VS2, SI1</strong></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                             <tr>
+                                <td>2.1</td>
+                                <td>Từ 6.0 ly trở lên</td>
+                                <td class="text-center">-10%</td>
+                                <td class="text-center">-5%</td>
+                            </tr>
+                            <tr>
+                                <td>2.2</td>
+                                <td>Từ 3.6 ly đến dưới 6.0 ly</td>
+                                <td class="text-center">-15%</td>
+                                <td class="text-center">-10%</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Kim cương Fancy Shape</td>
+                                <td class="text-center">-15%</td>
+                                <td class="text-center">-10%</td>
+                            </tr>
+                             <tr>
+                                <td>4</td>
+                                <td>Kim cương màu (Color Diamond)</td>
+                                <td class="text-center">-15%</td>
+                                <td class="text-center">-10%</td>
+                            </tr>
+                             <tr>
+                                <td>5</td>
+                                <td>Kim cương Đổi Trang sức</td>
+                                <td colspan="2" class="text-center">-5%</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <h2>3. Các quy định thu đổi tại BJF</h2>
+                <h3>3.1. Điều kiện Thu - Đổi</h3>
+                <ul>
+                    <li>Khách hàng phải cung cấp đầy đủ hoá đơn bán hàng.</li>
+                    <li>Trong trường hợp bị mất hoá đơn khách hàng phải cung cấp lại thông tin mua hàng chính xác để trích lục.</li>
+                    <li>Trong trường mất hoá đơn không trích lục được thì không giải quyết mua lại.</li>
+                    <li>Sản phẩm thu đổi phải còn nguyên vẹn, không bị biến dạng, móp méo, không thay đổi trọng lượng so với cấu trúc sản phẩm ban đầu.</li>
+                    <li>Đối với những sản phẩm không còn nguyên vẹn, BJF có quyền chủ động áp dụng hình thức thu đổi thích hợp hoặc không thu đổi, tùy thuộc vào tình trạng thực tế của sản phẩm.</li>
+                </ul>
+                <h3>3.2. Thời gian và địa điểm</h3>
+                 <ul>
+                    <li><strong>Thời gian:</strong> Từ 10h - 16h hằng ngày (không thu đổi vào thứ 7, CN và Ngày lễ).</li>
+                    <li><strong>Địa điểm:</strong> Hệ thống cửa hàng BJF trên toàn quốc.</li>
+                </ul>
+                 <h3>3.3. Trường hợp đổi hàng trong vòng 48h</h3>
+                 <ul>
+                    <li>Sản phẩm phải còn nguyên vẹn như tình trạng ban đầu.</li>
+                    <li>BJF mua lại 100% giá trị sản phẩm ban đầu với trường hợp khách hàng đổi sản phẩm mới có giá trị cao hơn hoặc bằng sản phẩm cũ.</li>
+                    <li>BJF mua lại 90% giá trị sản phẩm ban đầu với trường hợp khách hàng đổi sản phẩm mới có giá trị thấp hơn sản phẩm cũ.</li>
+                    <li>Không áp dụng đối với Kim cương rời và không áp dụng trả hàng.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

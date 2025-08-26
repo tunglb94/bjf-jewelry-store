@@ -214,3 +214,12 @@ def job_detail(request, slug):
         'job': job
     }
     return render(request, 'store/job_detail.html', context)
+
+def policy_exchange(request):
+    return render(request, 'store/policy_exchange.html')
+
+def policy_warranty(request):
+    return render(request, 'store/policy_warranty.html')
+
+def policy_custom_order(request):
+    return render(request, 'store/policy_custom_order.html')

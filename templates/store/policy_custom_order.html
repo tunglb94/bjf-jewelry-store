@@ -1,0 +1,33 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}Chính Sách Đặt Hàng Thiết Kế Riêng - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl prose max-w-none">
+            <h1 class="text-center">CHÍNH SÁCH ĐẶT HÀNG THIẾT KẾ RIÊNG</h1>
+            <p class="text-center text-sm text-gray-500">Mã: 03/CSĐH/PKD | Lần ban hành: 01 | Ngày ban hành: 01/08/2025</p>
+
+            <div class="mt-8">
+                <h2>1. Nội dung đặt hàng</h2>
+                <ul>
+                    <li>Quý khách hàng sẽ thanh toán tiền cọc tương đương <strong>50%</strong> giá trị sản phẩm và thanh toán 50% còn lại vào ngày nhận hàng.</li>
+                    <li>BJF sẽ báo giá quý khách dựa trên ước tính. Sau khi lên mẫu thiết kế 3D, chúng tôi sẽ có thông báo điều chỉnh về giá theo thông số thực tế.</li>
+                    <li>BJF hỗ trợ lên mẫu 3D và khách hàng được thay đổi thiết kế nhưng <strong>không quá 2 lần</strong>.</li>
+                    <li>Sau khi khách hàng đã duyệt bản vẽ, nếu muốn thay đổi thiết kế hoặc thông số, khách hàng sẽ chi trả các chi phí phát sinh (nếu có).</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>2. Thời gian nhận hàng</h2>
+                <ul>
+                    <li>Thời gian tiêu chuẩn từ lúc đặt hàng đến nhận hàng là <strong>10-15 ngày</strong> (trừ thứ 7, chủ nhật và các ngày lễ).</li>
+                    <li>Thời gian này có thể thay đổi tùy thuộc vào độ phức tạp của mẫu thiết kế. BJF sẽ thông báo với quý khách khi có sự thay đổi.</li>
+                    <li>Trường hợp khách hàng cần đặt hàng gấp, vui lòng trao đổi trực tiếp để BJF kiểm tra và hỗ trợ tốt nhất.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

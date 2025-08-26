@@ -1,0 +1,95 @@
+{% extends 'store/base.html' %}
+{% load static %}
+{% block title %}Chính Sách Bảo Hành - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="bg-white p-8 md:p-12 rounded-2xl shadow-xl prose max-w-none">
+            <h1 class="text-center">CHÍNH SÁCH BẢO HÀNH</h1>
+            <p class="text-center text-sm text-gray-500">Mã: 02/CSBH/PKD | Lần ban hành: 01 | Ngày ban hành: 01/08/2025</p>
+
+            <div class="mt-8">
+                <h2>1. Thời gian và nội dung bảo hành</h2>
+                <ul>
+                    <li>Bảo hành <strong>6 tháng</strong> với các trường hợp liên quan đến lỗi kỹ thuật sản phẩm.</li>
+                    <li>Đánh bóng, xi mới: <strong>miễn phí trọn đời</strong>.</li>
+                    <li>Gắn đá cao cấp CZ dưới 3ly: <strong>miễn phí trọn đời</strong>.</li>
+                    <li>Làm sạch, siêu âm trang sức: <strong>miễn phí vô thời hạn</strong>.</li>
+                </ul>
+            </div>
+
+            <div>
+                <h2>2. Điều kiện bảo hành</h2>
+                <ul>
+                    <li>BJF chỉ nhận bảo hành tăng/giảm size nhẫn (vòng/lắc) với những thiết kế có thể thay đổi được.</li>
+                    <li>Không nhận bảo hành các sản phẩm không có khả năng khôi phục lại hiện trạng ban đầu (ví dụ: dây chuyền bị đứt gãy, sản phẩm bị biến dạng nặng).</li>
+                    <li>Trường hợp bảo hành cần thêm nguyên liệu (vàng, kim cương tấm,...), BJF sẽ tính thêm chi phí nguyên liệu.</li>
+                    <li><strong>BJF từ chối bảo hành nếu:</strong>
+                        <ul>
+                            <li>Sản phẩm đã được một đơn vị khác ngoài BJF can thiệp trước đó.</li>
+                            <li>Sản phẩm hư hỏng do tác động bên ngoài hoặc sử dụng không đúng cách.</li>
+                            <li>Khách hàng cung cấp thông tin hóa đơn không chính xác.</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+            
+            <div class="mt-8">
+                <h2>3. Bảng phí bảo hành (tham khảo)</h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full">
+                        <thead>
+                            <tr>
+                                <th>STT</th>
+                                <th>NỘI DUNG</th>
+                                <th>CHỦNG LOẠI</th>
+                                <th>MỨC PHÍ (VND)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>Hàn trang sức đứt gãy</td>
+                                <td>Tất cả chủng loại</td>
+                                <td class="text-center">70.000 (cho 1 mối hàn)</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>Sửa khóa</td>
+                                <td>Tất cả chủng loại</td>
+                                <td class="text-center">150.000</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>Làm lại chấu (chưa tính phí nguyên liệu)</td>
+                                <td>Vỏ trang sức KC, Đá màu</td>
+                                <td class="text-center">700.000</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>Phí công gắn Kim cương rời (theo kích thước)</td>
+                                <td>
+                                    3.6 - &lt;4.5 ly<br>
+                                    4.5 - &lt;5.4 ly<br>
+                                    5.4 - &lt;6.3 ly<br>
+                                    6.3 - &lt;8.1 ly<br>
+                                    &gt;=8.1 ly
+                                </td>
+                                <td class="text-center">
+                                    500.000<br>
+                                    600.000<br>
+                                    700.000<br>
+                                    800.000<br>
+                                    2.000.000
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                 <p class="mt-4"><strong>Lưu ý:</strong> Sau khi bảo hành, sản phẩm có thể chỉ đảm bảo đáp ứng được tối đa 70-80% so với ban đầu.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

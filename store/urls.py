@@ -16,6 +16,11 @@ urlpatterns = [
     path('tuyen-dung/', views.recruitment, name='recruitment'),
     path('tuyen-dung/<slug:slug>/', views.job_detail, name='job_detail'),
     
+    # URLs cho chính sách (THÊM 3 DÒNG NÀY)
+    path('chinh-sach/thu-doi/', views.policy_exchange, name='policy_exchange'),
+    path('chinh-sach/bao-hanh/', views.policy_warranty, name='policy_warranty'),
+    path('chinh-sach/dat-hang-thiet-ke-rieng/', views.policy_custom_order, name='policy_custom_order'),
+    
     # URLs cho giỏ hàng
     path('gio-hang/', views.cart_detail, name='cart_detail'),
     path('them-vao-gio-hang/', views.add_to_cart, name='add_to_cart'),

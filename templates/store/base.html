@@ -53,6 +53,13 @@
       .swiper-pagination-bullet-active {
         background: white !important;
       }
+      /* ---- CSS CHO MENU DROPDOWN ---- */
+      .group .dropdown-menu {
+        display: none;
+      }
+      .group:hover .dropdown-menu {
+        display: block;
+      }
     </style>
 </head>
 <body class="bg-gray-50">
@@ -67,10 +74,21 @@
 
                 <a href="{% url 'store:home' %}" class="text-white text-3xl font-bold">{{ settings.logo_text }}</a>
                 
-                <nav class="hidden md:flex space-x-8">
+                <nav class="hidden md:flex space-x-8 items-center">
                     <a href="{% url 'store:home' %}" class="{% if request.resolver_match.url_name == 'home' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Trang chủ</a>
                     <a href="{% url 'store:product_list' %}" class="{% if request.resolver_match.url_name == 'product_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Sản phẩm</a>
                     <a href="{% url 'store:about_us' %}" class="{% if request.resolver_match.url_name == 'about_us' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Về Chúng Tôi</a>
+                    
+                    <div class="relative group">
+                        <a href="#" class="{% if request.resolver_match.url_name in 'policy_exchange,policy_warranty,policy_custom_order' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors inline-flex items-center">
+                            Chính sách <i class="ri-arrow-down-s-line ml-1"></i>
+                        </a>
+                        <div class="dropdown-menu absolute top-full left-0 mt-2 w-60 bg-white rounded-md shadow-lg py-2 z-50">
+                            <a href="{% url 'store:policy_exchange' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Thu đổi</a>
+                            <a href="{% url 'store:policy_warranty' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Bảo hành</a>
+                            <a href="{% url 'store:policy_custom_order' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Đặt hàng riêng</a>
+                        </div>
+                    </div>
                     <a href="{% url 'store:post_list' %}" class="{% if request.resolver_match.url_name == 'post_list' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Tin tức</a>
                     <a href="{% url 'store:recruitment' %}" class="{% if request.resolver_match.url_name == 'recruitment' or request.resolver_match.url_name == 'job_detail' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Tuyển dụng</a>
                     <a href="{% url 'store:contact' %}" class="{% if request.resolver_match.url_name == 'contact' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors">Liên hệ</a>
@@ -101,6 +119,17 @@
                 <a href="{% url 'store:home' %}" class="text-white hover:text-yellow-200">Trang chủ</a>
                 <a href="{% url 'store:product_list' %}" class="text-white hover:text-yellow-200">Sản phẩm</a>
                 <a href="{% url 'store:about_us' %}" class="text-white hover:text-yellow-200">Về Chúng Tôi</a>
+                <div x-data="{ open: false }" class="text-white">
+                    <button @click="open = !open" class="w-full text-left flex justify-between items-center hover:text-yellow-200">
+                        <span>Chính sách</span>
+                        <i :class="{'ri-arrow-down-s-line': !open, 'ri-arrow-up-s-line': open}"></i>
+                    </button>
+                    <div x-show="open" class="pl-4 pt-2 space-y-2">
+                        <a href="{% url 'store:policy_exchange' %}" class="block text-gray-300 hover:text-yellow-200">Chính sách Thu đổi</a>
+                        <a href="{% url 'store:policy_warranty' %}" class="block text-gray-300 hover:text-yellow-200">Chính sách Bảo hành</a>
+                        <a href="{% url 'store:policy_custom_order' %}" class="block text-gray-300 hover:text-yellow-200">Đặt hàng riêng</a>
+                    </div>
+                </div>
                 <a href="{% url 'store:post_list' %}" class="text-white hover:text-yellow-200">Tin tức</a>
                 <a href="{% url 'store:recruitment' %}" class="text-white hover:text-yellow-200">Tuyển dụng</a>
                 <a href="{% url 'store:contact' %}" class="text-white hover:text-yellow-200">Liên hệ</a>
@@ -181,6 +210,7 @@
         {% endfor %}
     </div>
 
+    <script src="//unpkg.com/alpinejs" defer></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const mobileMenuButton = document.getElementById('mobile-menu-button');
