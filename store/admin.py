@@ -9,6 +9,8 @@ from django.http import HttpResponse
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Cm
 import io
+import os
+from django.conf import settings
 # --------------------------------------------
 
 # --- Imports cho tính năng gán quyền hàng loạt ---
@@ -26,7 +28,6 @@ from .models import (
     BatDongSan # Model Bất động sản mới
 )
 
-# ... (Tất cả các class Admin từ CategoryAdmin đến JobPostingAdmin giữ nguyên) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
@@ -188,7 +189,8 @@ def export_as_docx(modeladmin, request, queryset):
 
     bds = queryset.first()
     
-    doc = DocxTemplate("store/docx_templates/template.docx")
+    template_path = os.path.join(settings.BASE_DIR, 'store', 'docx_templates', 'template.docx')
+    doc = DocxTemplate(template_path)
     
     context = {
         'id_tai_san': bds.id_tai_san,
@@ -209,18 +211,19 @@ def export_as_docx(modeladmin, request, queryset):
         'quy_hoach': bds.quy_hoach,
         'nguoi_khao_sat': bds.nguoi_khao_sat.ho_ten if bds.nguoi_khao_sat else "",
         'sdt_nguoi_khao_sat': bds.nguoi_khao_sat.so_dien_thoai if bds.nguoi_khao_sat else "",
-        
-        # SỬA LỖI Ở DÒNG DƯỚI ĐÂY
         'thoi_gian_khao_sat': bds.thoi_gian_khao_sat.strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
-        
         'ghi_chu_them': bds.ghi_chu_them,
         'link_so_do': bds.link_so_do,
     }
     
     if bds.anh_so_do:
-        context['anh_so_do'] = InlineImage(doc, bds.anh_so_do.path, width=Cm(15))
+        image_path = os.path.join(settings.MEDIA_ROOT, str(bds.anh_so_do))
+        if os.path.exists(image_path):
+            context['anh_so_do'] = InlineImage(doc, image_path, width=Cm(15))
     if bds.anh_hien_trang_1:
-        context['anh_hien_trang_1'] = InlineImage(doc, bds.anh_hien_trang_1.path, width=Cm(15))
+        image_path = os.path.join(settings.MEDIA_ROOT, str(bds.anh_hien_trang_1))
+        if os.path.exists(image_path):
+            context['anh_hien_trang_1'] = InlineImage(doc, image_path, width=Cm(15))
         
     doc.render(context)
     
