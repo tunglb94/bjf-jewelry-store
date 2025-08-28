@@ -2,11 +2,16 @@
 
 from django.contrib import admin
 from solo.admin import SingletonModelAdmin
+# --- IMPORT MỚI ---
+from django.utils import timezone
+# ------------------
 from .models import (
     Category, Product, Post, SiteConfiguration, 
     ContactMessage, Order, OrderItem, Banner, 
     ProductVariation, ProductImage, ActionButton, Testimonial,
-    AboutPage, JobPosting
+    AboutPage, JobPosting,
+    # --- CÁC MODEL MỚI CHO HỆ THỐNG NHÂN SỰ ---
+    PhongBan, ChucVu, NhanVien, ChamCong
 )
 
 @admin.register(Category)
@@ -129,3 +134,48 @@ class JobPostingAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'requirements')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_active',)
+
+# =======================================================
+# ==            ADMIN CHO HỆ THỐNG NHÂN SỰ             ==
+# =======================================================
+
+class ChamCongInline(admin.TabularInline):
+    model = ChamCong
+    extra = 1
+    fields = ('ngay_cham_cong', 'trang_thai', 'gio_check_in', 'gio_check_out', 'ghi_chu')
+    ordering = ('-ngay_cham_cong',)
+
+@admin.register(NhanVien)
+class NhanVienAdmin(admin.ModelAdmin):
+    list_display = ('ma_nhan_vien', 'ho_ten', 'chuc_vu', 'phong_ban', 'trang_thai', 'hien_thi_luong_thang_nay')
+    list_filter = ('trang_thai', 'phong_ban', 'chuc_vu')
+    search_fields = ('ma_nhan_vien', 'ho_ten', 'email', 'so_dien_thoai')
+    ordering = ('ho_ten',)
+    inlines = [ChamCongInline]
+    
+    fieldsets = (
+        ('Thông tin cá nhân', {
+            'fields': ('ho_ten', 'ngay_sinh', 'so_dien_thoai', 'email')
+        }),
+        ('Thông tin công việc', {
+            'fields': ('ma_nhan_vien', 'user', 'phong_ban', 'chuc_vu', 'ngay_vao_lam', 'luong_co_ban', 'trang_thai')
+        }),
+    )
+
+    def hien_thi_luong_thang_nay(self, obj):
+        today = timezone.now()
+        luong = obj.tinh_luong_thang(today.year, today.month)
+        return f"{int(luong):,} VND"
+    
+    hien_thi_luong_thang_nay.short_description = f"Lương tháng {timezone.now().month}/{timezone.now().year}"
+
+@admin.register(ChamCong)
+class ChamCongAdmin(admin.ModelAdmin):
+    list_display = ('nhan_vien', 'ngay_cham_cong', 'trang_thai', 'gio_check_in', 'gio_check_out')
+    list_filter = ('trang_thai', 'ngay_cham_cong')
+    search_fields = ('nhan_vien__ho_ten', 'nhan_vien__ma_nhan_vien')
+    ordering = ('-ngay_cham_cong', 'nhan_vien')
+    date_hierarchy = 'ngay_cham_cong'
+
+admin.site.register(PhongBan)
+admin.site.register(ChucVu)

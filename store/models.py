@@ -5,6 +5,12 @@ from django.utils import timezone
 from solo.models import SingletonModel
 from ckeditor.fields import RichTextField
 
+# --- CÁC IMPORT MỚI CHO HỆ THỐNG NHÂN SỰ ---
+import calendar
+from django.conf import settings
+# -------------------------------------------
+
+
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Tên danh mục")
     slug = models.SlugField(max_length=200, unique=True, help_text="Phần hiển thị trên URL, không dấu, không khoảng trắng. VD: nhan-kim-cuong")
@@ -276,3 +282,106 @@ class JobPosting(models.Model):
 
     def __str__(self):
         return self.title
+
+
+# =======================================================
+# ==               HỆ THỐNG QUẢN LÝ NHÂN SỰ            ==
+# =======================================================
+
+class PhongBan(models.Model):
+    ten_phong_ban = models.CharField(max_length=100, unique=True, verbose_name="Tên phòng ban")
+    
+    class Meta:
+        verbose_name = "Phòng Ban"
+        verbose_name_plural = "Các Phòng Ban"
+
+    def __str__(self):
+        return self.ten_phong_ban
+
+class ChucVu(models.Model):
+    ten_chuc_vu = models.CharField(max_length=100, unique=True, verbose_name="Tên chức vụ")
+
+    class Meta:
+        verbose_name = "Chức Vụ"
+        verbose_name_plural = "Các Chức Vụ"
+
+    def __str__(self):
+        return self.ten_chuc_vu
+
+class NhanVien(models.Model):
+    class TrangThaiLamViec(models.TextChoices):
+        DANG_LAM_VIEC = 'DLV', 'Đang làm việc'
+        DA_NGHI_VIEC = 'DNV', 'Đã nghỉ việc'
+        TAM_NGHI = 'TN', 'Tạm nghỉ'
+
+    # Liên kết 1-1 với model User có sẵn của Django để quản lý đăng nhập
+    user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tài khoản")
+    ma_nhan_vien = models.CharField(max_length=20, unique=True, verbose_name="Mã nhân viên")
+    ho_ten = models.CharField(max_length=100, verbose_name="Họ và tên")
+    ngay_sinh = models.DateField(verbose_name="Ngày sinh")
+    so_dien_thoai = models.CharField(max_length=15, blank=True, null=True, verbose_name="Số điện thoại")
+    email = models.EmailField(unique=True, verbose_name="Email")
+    phong_ban = models.ForeignKey(PhongBan, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Phòng ban")
+    chuc_vu = models.ForeignKey(ChucVu, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Chức vụ")
+    ngay_vao_lam = models.DateField(verbose_name="Ngày vào làm")
+    luong_co_ban = models.DecimalField(
+        max_digits=15, 
+        decimal_places=0, 
+        default=0, 
+        verbose_name="Lương cơ bản (VND)"
+    )
+    trang_thai = models.CharField(
+        max_length=3,
+        choices=TrangThaiLamViec.choices,
+        default=TrangThaiLamViec.DANG_LAM_VIEC,
+        verbose_name="Trạng thái làm việc"
+    )
+    
+    class Meta:
+        verbose_name = "Nhân Viên"
+        verbose_name_plural = "Danh sách Nhân Viên"
+
+    def __str__(self):
+        return f"{self.ma_nhan_vien} - {self.ho_ten}"
+
+    def tinh_luong_thang(self, year, month):
+        if self.luong_co_ban <= 0:
+            return 0
+        _, so_ngay_trong_thang = calendar.monthrange(year, month)
+        if so_ngay_trong_thang == 0:
+            return 0
+        luong_theo_ngay = self.luong_co_ban / so_ngay_trong_thang
+        so_ngay_di_lam = ChamCong.objects.filter(
+            nhan_vien=self,
+            ngay_cham_cong__year=year,
+            ngay_cham_cong__month=month,
+            trang_thai=ChamCong.TrangThaiChamCong.DI_LAM
+        ).count()
+        luong_thuc_te = luong_theo_ngay * so_ngay_di_lam
+        return luong_thuc_te
+
+class ChamCong(models.Model):
+    class TrangThaiChamCong(models.TextChoices):
+        DI_LAM = 'DL', 'Đi làm'
+        NGHI_PHEP = 'NP', 'Nghỉ phép'
+        VANG_KHONG_PHEP = 'VKP', 'Vắng không phép'
+
+    nhan_vien = models.ForeignKey(NhanVien, on_delete=models.CASCADE, verbose_name="Nhân viên")
+    ngay_cham_cong = models.DateField(verbose_name="Ngày chấm công")
+    trang_thai = models.CharField(
+        max_length=3,
+        choices=TrangThaiChamCong.choices,
+        default=TrangThaiChamCong.DI_LAM,
+        verbose_name="Trạng thái"
+    )
+    gio_check_in = models.TimeField(null=True, blank=True, verbose_name="Giờ check-in")
+    gio_check_out = models.TimeField(null=True, blank=True, verbose_name="Giờ check-out")
+    ghi_chu = models.TextField(blank=True, null=True, verbose_name="Ghi chú")
+
+    class Meta:
+        verbose_name = "Chấm Công"
+        verbose_name_plural = "Dữ liệu Chấm Công"
+        unique_together = ('nhan_vien', 'ngay_cham_cong')
+
+    def __str__(self):
+        return f"Chấm công {self.nhan_vien.ho_ten} - {self.ngay_cham_cong}"
