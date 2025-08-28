@@ -26,6 +26,7 @@ from .models import (
     BatDongSan # Model Bất động sản mới
 )
 
+# ... (Tất cả các class Admin từ CategoryAdmin đến JobPostingAdmin giữ nguyên) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
@@ -50,8 +51,6 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'sku', 'description')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline, ProductVariationInline]
-
-# ... (Các class Admin khác giữ nguyên) ...
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -121,7 +120,6 @@ class TestimonialAdmin(admin.ModelAdmin):
 
 @admin.register(AboutPage)
 class AboutPageAdmin(SingletonModelAdmin):
-    # ... fieldsets ...
     pass
 
 
@@ -211,7 +209,10 @@ def export_as_docx(modeladmin, request, queryset):
         'quy_hoach': bds.quy_hoach,
         'nguoi_khao_sat': bds.nguoi_khao_sat.ho_ten if bds.nguoi_khao_sat else "",
         'sdt_nguoi_khao_sat': bds.nguoi_khao_sat.so_dien_thoai if bds.nguoi_khao_sat else "",
-        'thoi_gian_khao_sat': timezone.localtime(bds.thoi_gian_khao_sat).strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
+        
+        # SỬA LỖI Ở DÒNG DƯỚI ĐÂY
+        'thoi_gian_khao_sat': bds.thoi_gian_khao_sat.strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
+        
         'ghi_chu_them': bds.ghi_chu_them,
         'link_so_do': bds.link_so_do,
     }
