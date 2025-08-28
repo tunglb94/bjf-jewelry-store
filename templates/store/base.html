@@ -53,13 +53,7 @@
       .swiper-pagination-bullet-active {
         background: white !important;
       }
-      /* ---- CSS CHO MENU DROPDOWN ---- */
-      .group .dropdown-menu {
-        display: none;
-      }
-      .group:hover .dropdown-menu {
-        display: block;
-      }
+      /* ĐOẠN CSS CHO MENU ĐÃ ĐƯỢC XÓA VÌ DÙNG TRỰC TIẾP CLASS CỦA TAILWIND */
     </style>
 </head>
 <body class="bg-gray-50">
@@ -83,7 +77,7 @@
                         <a href="#" class="{% if request.resolver_match.url_name in 'policy_exchange,policy_warranty,policy_custom_order' %}text-yellow-300 font-bold{% else %}text-white hover:text-yellow-200{% endif %} transition-colors inline-flex items-center">
                             Chính sách <i class="ri-arrow-down-s-line ml-1"></i>
                         </a>
-                        <div class="dropdown-menu absolute top-full left-0 mt-2 w-60 bg-white rounded-md shadow-lg py-2 z-50">
+                        <div class="absolute top-full left-0 w-60 bg-white rounded-md shadow-lg py-2 z-50 hidden group-hover:block pt-4">
                             <a href="{% url 'store:policy_exchange' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Thu đổi</a>
                             <a href="{% url 'store:policy_warranty' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Bảo hành</a>
                             <a href="{% url 'store:policy_custom_order' %}" class="block px-4 py-2 text-gray-800 hover:bg-gray-100">Chính sách Đặt hàng riêng</a>
