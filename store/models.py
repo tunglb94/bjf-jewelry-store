@@ -316,10 +316,19 @@ class ChamCong(models.Model):
 # ==         HỆ THỐNG QUẢN LÝ BẤT ĐỘNG SẢN           ==
 # =======================================================
 
+class LoaiBatDongSan(models.Model):
+    ten_loai = models.CharField(max_length=100, unique=True, verbose_name="Tên loại BĐS")
+    class Meta:
+        verbose_name = "Loại Bất động sản"
+        verbose_name_plural = "Các Loại Bất động sản"
+        ordering = ['ten_loai']
+    def __str__(self):
+        return self.ten_loai
+
 class BatDongSan(models.Model):
     # I. Thông tin cơ bản
     id_tai_san = models.CharField(max_length=50, unique=True, verbose_name="ID tài sản")
-    loai_bds = models.CharField(max_length=100, default="Đất nền", verbose_name="Loại BĐS")
+    loai_bds = models.ForeignKey(LoaiBatDongSan, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Loại BĐS")
     dia_chi = models.CharField(max_length=255, verbose_name="Địa chỉ")
     google_maps_link = models.URLField(blank=True, null=True, verbose_name="Link Google Maps")
     chi_tiet_su_dung_dat = models.CharField(max_length=255, verbose_name="Chi tiết sử dụng đất", help_text="Ví dụ: Đất thổ cư 5100 m2")
@@ -329,30 +338,25 @@ class BatDongSan(models.Model):
     phap_ly = models.CharField(max_length=100, default="Sổ đỏ/Sổ hồng", verbose_name="Pháp lý")
     tinh_trang_xay_dung = models.CharField(max_length=100, default="Đất trống", verbose_name="Tình trạng xây dựng")
     hien_trang_su_dung = models.TextField(blank=True, verbose_name="Hiện trạng sử dụng")
-
     # II. Giá và giao dịch
     gia_rao_cam_co = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Giá chủ nhà rao cầm cố (VNĐ)")
     gia_chot_ky_vong = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Khoảng giá chốt kỳ vọng (VNĐ)")
     don_gia_tham_khao = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Đơn giá tham khảo (VNĐ/m2)")
-
     # III. Phân tích tiềm năng
     phan_tich_tiem_nang = models.TextField(blank=True, verbose_name="Phân tích tiềm năng và hạ tầng")
     uu_diem_vi_tri = models.TextField(blank=True, verbose_name="Ưu điểm vị trí")
     nhuoc_diem = models.TextField(blank=True, verbose_name="Nhược điểm/Hạn chế")
     quy_hoach = models.TextField(blank=True, verbose_name="Quy hoạch/Kế hoạch sử dụng đất")
-
     # V. Người khảo sát
     nguoi_khao_sat = models.ForeignKey(NhanVien, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Người khảo sát")
     thoi_gian_khao_sat = models.DateField(null=True, blank=True, verbose_name="Thời gian khảo sát")
     ghi_chu_them = models.TextField(blank=True, verbose_name="Ghi chú thêm")
-    
     class Meta:
         verbose_name = "Bất động sản"
         verbose_name_plural = "Danh sách Bất động sản"
         permissions = [
             ("manage_batdongsan", "Có thể quản lý toàn bộ Bất động sản"),
         ]
-
     def __str__(self):
         return self.id_tai_san
 
@@ -360,10 +364,8 @@ class HinhAnhBatDongSan(models.Model):
     bat_dong_san = models.ForeignKey(BatDongSan, on_delete=models.CASCADE, related_name='hinh_anh', verbose_name="Bất động sản")
     image = models.ImageField(upload_to='bds/hien_trang/', verbose_name="Hình ảnh")
     mo_ta = models.CharField(max_length=255, blank=True, verbose_name="Mô tả ngắn")
-
     class Meta:
         verbose_name = "Hình ảnh Bất động sản"
         verbose_name_plural = "Các Hình ảnh Bất động sản"
-
     def __str__(self):
         return f"Hình ảnh cho {self.bat_dong_san.id_tai_san}"
