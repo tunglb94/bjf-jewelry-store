@@ -3,29 +3,22 @@
 from django.contrib import admin, messages
 from solo.admin import SingletonModelAdmin
 from django.utils import timezone
-
-# --- Imports cho tính năng xuất file DOCX ---
 from django.http import HttpResponse
 from docxtpl import DocxTemplate, InlineImage
 from docx.shared import Cm
 import io
 import os
 from django.conf import settings
-# --------------------------------------------
-
-# --- Imports cho tính năng gán quyền hàng loạt ---
 from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
-# ------------------------------------------------
-
 from .models import (
     Category, Product, Post, SiteConfiguration, 
     ContactMessage, Order, OrderItem, Banner, 
     ProductVariation, ProductImage, ActionButton, Testimonial,
     AboutPage, JobPosting,
     PhongBan, ChucVu, NhanVien, ChamCong,
-    BatDongSan # Model Bất động sản mới
+    BatDongSan, HinhAnhBatDongSan # Model Bất động sản và Hình ảnh mới
 )
 
 @admin.register(Category)
@@ -121,8 +114,25 @@ class TestimonialAdmin(admin.ModelAdmin):
 
 @admin.register(AboutPage)
 class AboutPageAdmin(SingletonModelAdmin):
-    pass
-
+    fieldsets = (
+        ('Section Hero', {
+            'fields': ('hero_title', 'hero_subtitle', 'hero_image')
+        }),
+        ('Section Triết lý', {
+            'fields': ('philosophy_tagline', 'philosophy_title', 'philosophy_content', 'philosophy_image')
+        }),
+        ('Section Lịch sử', {
+            'fields': (
+                'history_title', 'history_subtitle',
+                'milestone1_year', 'milestone1_text', 'milestone1_image',
+                'milestone2_year', 'milestone2_text', 'milestone2_image',
+                'milestone3_year', 'milestone3_text', 'milestone3_image',
+            )
+        }),
+         ('Section Chế tác', {
+            'fields': ('craftsmanship_title', 'craftsmanship_subtitle')
+        }),
+    )
 
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
@@ -131,7 +141,6 @@ class JobPostingAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'requirements')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_active',)
-
 
 # =======================================================
 # ==            ADMIN CHO HỆ THỐNG NHÂN SỰ             ==
@@ -182,6 +191,14 @@ admin.site.register(ChucVu)
 # ==         ADMIN CHO HỆ THỐNG BẤT ĐỘNG SẢN           ==
 # =======================================================
 
+class HinhAnhBatDongSanInline(admin.TabularInline):
+    model = HinhAnhBatDongSan
+    extra = 3
+    fields = ('image', 'mo_ta')
+    verbose_name = "Hình ảnh"
+    verbose_name_plural = "Thêm các hình ảnh (sổ đỏ, hiện trạng...)"
+
+
 def export_as_docx(modeladmin, request, queryset):
     if queryset.count() != 1:
         modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
@@ -213,18 +230,25 @@ def export_as_docx(modeladmin, request, queryset):
         'sdt_nguoi_khao_sat': bds.nguoi_khao_sat.so_dien_thoai if bds.nguoi_khao_sat else "",
         'thoi_gian_khao_sat': bds.thoi_gian_khao_sat.strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
         'ghi_chu_them': bds.ghi_chu_them,
-        'link_so_do': bds.link_so_do,
     }
     
-    if bds.anh_so_do:
-        image_path = os.path.join(settings.MEDIA_ROOT, str(bds.anh_so_do))
+    hinh_anh_list = list(bds.hinh_anh.all())
+    
+    if len(hinh_anh_list) > 0 and hinh_anh_list[0].image:
+        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[0].image))
         if os.path.exists(image_path):
-            context['anh_so_do'] = InlineImage(doc, image_path, width=Cm(15))
-    if bds.anh_hien_trang_1:
-        image_path = os.path.join(settings.MEDIA_ROOT, str(bds.anh_hien_trang_1))
+            context['anh_1'] = InlineImage(doc, image_path, width=Cm(15))
+            
+    if len(hinh_anh_list) > 1 and hinh_anh_list[1].image:
+        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[1].image))
         if os.path.exists(image_path):
-            context['anh_hien_trang_1'] = InlineImage(doc, image_path, width=Cm(15))
-        
+            context['anh_2'] = InlineImage(doc, image_path, width=Cm(15))
+
+    if len(hinh_anh_list) > 2 and hinh_anh_list[2].image:
+        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[2].image))
+        if os.path.exists(image_path):
+            context['anh_3'] = InlineImage(doc, image_path, width=Cm(15))
+            
     doc.render(context)
     
     buffer = io.BytesIO()
@@ -239,17 +263,18 @@ export_as_docx.short_description = "Tải về file thông tin BĐS (.docx)"
 
 @admin.register(BatDongSan)
 class BatDongSanAdmin(admin.ModelAdmin):
-    list_display = ('id_tai_san', 'dia_chi', 'loai_bds', 'nguoi_khao_sat', 'thoi_gian_khao_sat')
+    list_display = ('id_tai_san', 'dia_chi', 'loai_bds', 'nguoi_khao_sat')
     list_filter = ('loai_bds', 'nguoi_khao_sat')
     search_fields = ('id_tai_san', 'dia_chi')
     actions = [export_as_docx]
+    
+    inlines = [HinhAnhBatDongSanInline]
     
     fieldsets = (
         ("I. Thông tin cơ bản", {"fields": ("id_tai_san", "loai_bds", "dia_chi", "google_maps_link", "chi_tiet_su_dung_dat", "mat_tien", "chieu_sau", "huong", "phap_ly", "tinh_trang_xay_dung", "hien_trang_su_dung")}),
         ("II. Giá và giao dịch", {"fields": ("gia_rao_cam_co", "gia_chot_ky_vong", "don_gia_tham_khao")}),
         ("III. Phân tích", {"fields": ("phan_tich_tiem_nang", "uu_diem_vi_tri", "nhuoc_diem", "quy_hoach")}),
         ("V. Khảo sát", {"fields": ("nguoi_khao_sat", "thoi_gian_khao_sat", "ghi_chu_them")}),
-        ("Hình ảnh & Tài liệu", {"fields": ("link_so_do", "anh_so_do", "anh_hien_trang_1", "anh_hien_trang_2")}),
     )
 
 # =======================================================

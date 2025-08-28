@@ -345,13 +345,7 @@ class BatDongSan(models.Model):
     nguoi_khao_sat = models.ForeignKey(NhanVien, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Người khảo sát")
     thoi_gian_khao_sat = models.DateField(null=True, blank=True, verbose_name="Thời gian khảo sát")
     ghi_chu_them = models.TextField(blank=True, verbose_name="Ghi chú thêm")
-
-    # Hình ảnh
-    link_so_do = models.URLField(blank=True, verbose_name="Link sổ đỏ (Google Drive)")
-    anh_so_do = models.ImageField(upload_to='bds/so_do/', blank=True, null=True, verbose_name="Ảnh bản đồ vị trí/sổ đỏ")
-    anh_hien_trang_1 = models.ImageField(upload_to='bds/hien_trang/', blank=True, null=True, verbose_name="Ảnh hiện trạng 1")
-    anh_hien_trang_2 = models.ImageField(upload_to='bds/hien_trang/', blank=True, null=True, verbose_name="Ảnh hiện trạng 2")
-
+    
     class Meta:
         verbose_name = "Bất động sản"
         verbose_name_plural = "Danh sách Bất động sản"
@@ -361,3 +355,15 @@ class BatDongSan(models.Model):
 
     def __str__(self):
         return self.id_tai_san
+
+class HinhAnhBatDongSan(models.Model):
+    bat_dong_san = models.ForeignKey(BatDongSan, on_delete=models.CASCADE, related_name='hinh_anh', verbose_name="Bất động sản")
+    image = models.ImageField(upload_to='bds/hien_trang/', verbose_name="Hình ảnh")
+    mo_ta = models.CharField(max_length=255, blank=True, verbose_name="Mô tả ngắn")
+
+    class Meta:
+        verbose_name = "Hình ảnh Bất động sản"
+        verbose_name_plural = "Các Hình ảnh Bất động sản"
+
+    def __str__(self):
+        return f"Hình ảnh cho {self.bat_dong_san.id_tai_san}"
