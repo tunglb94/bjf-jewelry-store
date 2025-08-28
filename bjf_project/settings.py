@@ -114,82 +114,43 @@ CKEDITOR_CONFIGS = {
 # =======================================================
 
 JAZZMIN_SETTINGS = {
-    # Tiêu đề hiển thị trên tab trình duyệt
     "site_title": "BJF Admin",
-
-    # Tiêu đề ở góc trên bên trái
     "site_header": "BJF JEWELRY",
-
-    # Logo cho trang admin
-    "site_logo": None, # Bạn có thể trỏ tới file static logo, ví dụ: "images/logo.png"
-
-    # Text chào mừng trên trang đăng nhập
     "welcome_sign": "Chào mừng đến với trang quản trị BJF",
-
-    # Copyright ở footer
     "copyright": "BJF Jewelry Ltd",
 
-    # Cấu hình menu sidebar
+    # --- PHẦN SỬA LỖI ---
+    # Thay vì dùng dictionary để tạo nhóm, chúng ta chỉ cần liệt kê các model
+    # theo thứ tự mong muốn. Jazzmin sẽ tự động gom chúng theo App.
     "order_with_respect_to": [
-        # --- NHÓM QUẢN LÝ NHÂN SỰ ---
-        {
-            "label": "Quản lý Nhân sự", 
-            "icon": "fas fa-users-cog", 
-            "models": [
-                "store.NhanVien",
-                "store.ChamCong",
-                "store.PhongBan",
-                "store.ChucVu",
-            ]
-        },
-
-        # --- NHÓM QUẢN LÝ KINH DOANH ---
-        {
-            "label": "Quản lý Kinh doanh", 
-            "icon": "fas fa-store-alt", 
-            "models": [
-                "store.Order",
-                "store.Product",
-                "store.Category",
-                "store.Testimonial", # Nhận xét của khách hàng
-                "store.ContactMessage",
-            ]
-        },
-
-        # --- NHÓM NỘI DUNG & MARKETING ---
-        {
-            "label": "Nội dung & Marketing", 
-            "icon": "fas fa-bullhorn",
-            "models": [
-                "store.Post",
-                "store.Banner",
-                "store.AboutPage",
-            ]
-        },
-
-        # --- NHÓM TUYỂN DỤNG ---
-        {
-            "label": "Quản lý Tuyển dụng",
-            "icon": "fas fa-briefcase",
-            "models": [
-                "store.JobPosting",
-            ]
-        },
-
-        # --- NHÓM CÀI ĐẶT HỆ THỐNG ---
-        {
-            "label": "Hệ thống", 
-            "icon": "fas fa-cogs", 
-            "models": [
-                "auth.User", # Quản lý tài khoản
-                "auth.Group", # Quản lý nhóm quyền
-                "store.SiteConfiguration",
-                "store.ActionButton",
-            ]
-        },
+        # Nhân sự
+        "store.NhanVien",
+        "store.ChamCong",
+        "store.PhongBan",
+        "store.ChucVu",
+        
+        # Kinh doanh
+        "store.Order",
+        "store.Product",
+        "store.Category",
+        "store.Testimonial",
+        "store.ContactMessage",
+        
+        # Nội dung & Marketing
+        "store.Post",
+        "store.Banner",
+        "store.AboutPage",
+        
+        # Tuyển dụng
+        "store.JobPosting",
+        
+        # Hệ thống
+        "auth.User",
+        "auth.Group",
+        "store.SiteConfiguration",
+        "store.ActionButton",
     ],
 
-    # Tùy chỉnh icon cho từng model cụ thể (tùy chọn)
     "icons": {
         "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
