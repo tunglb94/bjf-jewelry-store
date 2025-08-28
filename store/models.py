@@ -4,12 +4,8 @@ from django.db import models
 from django.utils import timezone
 from solo.models import SingletonModel
 from ckeditor.fields import RichTextField
-
-# --- CÁC IMPORT MỚI CHO HỆ THỐNG NHÂN SỰ ---
 import calendar
 from django.conf import settings
-# -------------------------------------------
-
 
 class Category(models.Model):
     name = models.CharField(max_length=200, verbose_name="Tên danh mục")
@@ -18,6 +14,9 @@ class Category(models.Model):
     class Meta:
         verbose_name = "Danh mục"
         verbose_name_plural = "Các danh mục"
+        permissions = [
+            ("manage_category", "Có thể quản lý toàn bộ Danh mục"),
+        ]
     def __str__(self):
         return self.name
 
@@ -37,6 +36,9 @@ class Product(models.Model):
     class Meta:
         verbose_name = "Sản phẩm"
         verbose_name_plural = "Các sản phẩm"
+        permissions = [
+            ("manage_product", "Có thể quản lý toàn bộ Sản phẩm"),
+        ]
     def __str__(self):
         return self.name
 
@@ -45,12 +47,10 @@ class ProductImage(models.Model):
     image = models.ImageField(upload_to='products/', verbose_name="Hình ảnh")
     is_main = models.BooleanField(default=False, verbose_name="Là ảnh chính?")
     order = models.PositiveIntegerField(default=0, verbose_name="Thứ tự hiển thị")
-
     class Meta:
         verbose_name = "Hình ảnh sản phẩm"
         verbose_name_plural = "Các hình ảnh sản phẩm"
         ordering = ['order', 'is_main']
-
     def __str__(self):
         return f"Hình ảnh của {self.product.name} ({self.id})"
 
@@ -64,11 +64,13 @@ class Post(models.Model):
     meta_title = models.CharField(max_length=255, blank=True, null=True, verbose_name="Tiêu đề SEO")
     meta_description = models.TextField(blank=True, null=True, verbose_name="Mô tả SEO")
     keywords = models.CharField(max_length=255, blank=True, null=True, verbose_name="Từ khóa (keywords)")
-
     class Meta:
         verbose_name = "Bài viết"
         verbose_name_plural = "Các bài viết"
         ordering = ['-published_date']
+        permissions = [
+            ("manage_post", "Có thể quản lý toàn bộ Bài viết"),
+        ]
     def __str__(self):
         return self.title
 
@@ -119,6 +121,9 @@ class Order(models.Model):
         verbose_name = "Đơn hàng"
         verbose_name_plural = "Các đơn hàng"
         ordering = ['-created_at']
+        permissions = [
+            ("manage_order", "Có thể quản lý toàn bộ Đơn hàng"),
+        ]
     def __str__(self):
         return f"Đơn hàng #{self.id} - {self.full_name}"
 
@@ -134,75 +139,48 @@ class OrderItem(models.Model):
         return str(self.id)
 
 class Banner(models.Model):
-    BUTTON_TYPE_CHOICES = (
-        ('image', 'Hình ảnh'),
-        ('video', 'Video'),
-    )
-    file_type = models.CharField(
-        max_length=10, 
-        choices=BUTTON_TYPE_CHOICES, 
-        default='image', 
-        verbose_name="Loại banner"
-    )
-    image = models.ImageField(
-        upload_to='banners/', 
-        verbose_name="Hình ảnh banner", 
-        blank=True, null=True, 
-        help_text="Tải lên nếu loại banner là 'Hình ảnh'."
-    )
-    video_url = models.URLField(
-        blank=True, null=True, 
-        verbose_name="Đường dẫn Video (YouTube/Vimeo Embed)",
-        help_text="Dán link EMBED vào đây nếu loại banner là 'Video'. Ví dụ: https://www.youtube.com/embed/your_video_id"
-    )
+    BUTTON_TYPE_CHOICES = (('image', 'Hình ảnh'), ('video', 'Video'),)
+    file_type = models.CharField(max_length=10, choices=BUTTON_TYPE_CHOICES, default='image', verbose_name="Loại banner")
+    image = models.ImageField(upload_to='banners/', verbose_name="Hình ảnh banner", blank=True, null=True, help_text="Tải lên nếu loại banner là 'Hình ảnh'.")
+    video_url = models.URLField(blank=True, null=True, verbose_name="Đường dẫn Video (YouTube/Vimeo Embed)", help_text="Dán link EMBED vào đây nếu loại banner là 'Video'. Ví dụ: https://www.youtube.com/embed/your_video_id")
     title = models.CharField(max_length=255, blank=True, verbose_name="Tiêu đề chính (tùy chọn)")
     subtitle = models.CharField(max_length=255, blank=True, verbose_name="Tiêu đề phụ (tùy chọn)")
     link = models.URLField(blank=True, verbose_name="Đường dẫn (tùy chọn)")
     is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
     order = models.PositiveIntegerField(default=0, help_text="Thứ tự hiển thị, số nhỏ hơn hiện trước", verbose_name="Thứ tự")
-    
     class Meta:
         verbose_name = "Banner"
         verbose_name_plural = "Các Banner"
         ordering = ['order']
-        
+        permissions = [
+            ("manage_banner", "Có thể quản lý toàn bộ Banner"),
+        ]
     def __str__(self):
         return self.title or f"Banner {self.id}"
 
 class ProductVariation(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variations', verbose_name="Sản phẩm")
-    variation_type = models.CharField(max_length=50, verbose_name="Loại biến thể", choices=(
-        ('gold', 'Vàng'),
-        ('color', 'Màu sắc'),
-        ('stone_type', 'Loại hạt'),
-    ))
+    variation_type = models.CharField(max_length=50, verbose_name="Loại biến thể", choices=(('gold', 'Vàng'), ('color', 'Màu sắc'), ('stone_type', 'Loại hạt'),))
     variation_name = models.CharField(max_length=100, verbose_name="Tên biến thể")
     price_change = models.DecimalField(max_digits=12, decimal_places=0, default=0, verbose_name="Thay đổi giá (VND)")
     is_active = models.BooleanField(default=True, verbose_name="Hoạt động?")
-
     class Meta:
         verbose_name = "Biến thể sản phẩm"
         verbose_name_plural = "Các biến thể sản phẩm"
         unique_together = ('product', 'variation_type', 'variation_name')
-
     def __str__(self):
         return f"{self.product.name} - {self.get_variation_type_display()}: {self.variation_name}"
 
 class ActionButton(models.Model):
-    BUTTON_TYPE_CHOICES = (
-        ('zalo', 'Zalo'),
-        ('phone', 'Gọi điện'),
-    )
+    BUTTON_TYPE_CHOICES = (('zalo', 'Zalo'), ('phone', 'Gọi điện'),)
     button_type = models.CharField(max_length=10, choices=BUTTON_TYPE_CHOICES, verbose_name="Loại nút")
     phone_number = models.CharField(max_length=20, verbose_name="Số điện thoại")
     is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
     order = models.PositiveIntegerField(default=0, verbose_name="Thứ tự hiển thị")
-
     class Meta:
         verbose_name = "Nút hành động"
         verbose_name_plural = "Các nút hành động"
         ordering = ['order']
-
     def __str__(self):
         return f"{self.get_button_type_display()} - {self.phone_number}"
 
@@ -213,59 +191,41 @@ class Testimonial(models.Model):
     image = models.ImageField(upload_to='testimonials/', verbose_name="Ảnh đại diện khách hàng")
     is_active = models.BooleanField(default=True, verbose_name="Hiển thị?")
     order = models.PositiveIntegerField(default=0, verbose_name="Thứ tự hiển thị")
-
     class Meta:
         verbose_name = "Nhận xét của khách hàng"
         verbose_name_plural = "Các nhận xét của khách hàng"
         ordering = ['order']
-
     def __str__(self):
         return self.name
 
 class AboutPage(SingletonModel):
-    # Section Hero
     hero_title = models.CharField(max_length=200, default="Câu Chuyện Về BJF", verbose_name="Tiêu đề chính")
     hero_subtitle = models.CharField(max_length=300, default="Nơi mỗi tuyệt tác không chỉ là trang sức, mà là di sản của đam mê và sự tinh xảo.", verbose_name="Tiêu đề phụ")
     hero_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Ảnh nền Hero")
-
-    # Section Triết lý
     philosophy_tagline = models.CharField(max_length=100, default="Triết Lý Của Chúng Tôi", verbose_name="Dòng giới thiệu Triết lý")
     philosophy_title = models.CharField(max_length=200, default="Tôn Vinh Vẻ Đẹp Vĩnh Cửu", verbose_name="Tiêu đề Triết lý")
     philosophy_content = models.TextField(default="Tại BJF, chúng tôi tin rằng trang sức là ngôn ngữ của cảm xúc...", verbose_name="Nội dung Triết lý")
     philosophy_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Ảnh Triết lý")
-
-    # Section Lịch sử
     history_title = models.CharField(max_length=200, default="Dấu Ấn Qua Từng Thời Kỳ", verbose_name="Tiêu đề Lịch sử")
     history_subtitle = models.CharField(max_length=300, default="Hơn hai thập kỷ không ngừng nỗ lực để xây dựng một thương hiệu trang sức Việt Nam uy tín và đẳng cấp.", verbose_name="Tiêu đề phụ Lịch sử")
-    
     milestone1_year = models.CharField(max_length=50, default="2005: Khởi Đầu Đam Mê", verbose_name="Cột mốc 1 - Năm & Tiêu đề")
     milestone1_text = models.TextField(default="BJF ra đời từ một xưởng chế tác nhỏ...", verbose_name="Cột mốc 1 - Nội dung")
     milestone1_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 1 - Ảnh")
-
     milestone2_year = models.CharField(max_length=50, default="2015: Khẳng Định Vị Thế", verbose_name="Cột mốc 2 - Năm & Tiêu đề")
     milestone2_text = models.TextField(default="Trở thành một trong những thương hiệu được tin cậy hàng đầu...", verbose_name="Cột mốc 2 - Nội dung")
     milestone2_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 2 - Ảnh")
-    
     milestone3_year = models.CharField(max_length=50, default="2025: Vươn Ra Thế Giới", verbose_name="Cột mốc 3 - Năm & Tiêu đề")
     milestone3_text = models.TextField(default="Ra mắt nền tảng thương mại điện tử...", verbose_name="Cột mốc 3 - Nội dung")
     milestone3_image = models.ImageField(upload_to='about/', blank=True, null=True, verbose_name="Cột mốc 3 - Ảnh")
-    
-    # Section Chế tác
     craftsmanship_title = models.CharField(max_length=200, default="Nghệ Thuật Chế Tác Đỉnh Cao", verbose_name="Tiêu đề Chế tác")
     craftsmanship_subtitle = models.CharField(max_length=300, default="Mỗi sản phẩm là một bản giao hưởng của vật liệu quý hiếm và bàn tay tài hoa của nghệ nhân.", verbose_name="Tiêu đề phụ Chế tác")
-
     class Meta:
         verbose_name = "Trang Về Chúng Tôi"
-
     def __str__(self):
         return "Trang Về Chúng Tôi"
 
 class JobPosting(models.Model):
-    JOB_TYPE_CHOICES = (
-        ('full-time', 'Toàn thời gian'),
-        ('part-time', 'Bán thời gian'),
-        ('internship', 'Thực tập'),
-    )
+    JOB_TYPE_CHOICES = (('full-time', 'Toàn thời gian'), ('part-time', 'Bán thời gian'), ('internship', 'Thực tập'),)
     title = models.CharField(max_length=255, verbose_name="Chức danh")
     slug = models.SlugField(max_length=255, unique=True, help_text="Phần hiển thị trên URL, sẽ được tự động tạo.", verbose_name="Đường dẫn URL", null=True, blank=True)
     location = models.CharField(max_length=100, verbose_name="Địa điểm làm việc")
@@ -274,15 +234,12 @@ class JobPosting(models.Model):
     requirements = RichTextField(verbose_name="Yêu cầu ứng viên")
     is_active = models.BooleanField(default=True, verbose_name="Đang tuyển?")
     published_date = models.DateTimeField(default=timezone.now, verbose_name="Ngày đăng")
-
     class Meta:
         verbose_name = "Tin tuyển dụng"
         verbose_name_plural = "Các tin tuyển dụng"
         ordering = ['-published_date']
-
     def __str__(self):
         return self.title
-
 
 # =======================================================
 # ==               HỆ THỐNG QUẢN LÝ NHÂN SỰ            ==
@@ -290,21 +247,17 @@ class JobPosting(models.Model):
 
 class PhongBan(models.Model):
     ten_phong_ban = models.CharField(max_length=100, unique=True, verbose_name="Tên phòng ban")
-    
     class Meta:
         verbose_name = "Phòng Ban"
         verbose_name_plural = "Các Phòng Ban"
-
     def __str__(self):
         return self.ten_phong_ban
 
 class ChucVu(models.Model):
     ten_chuc_vu = models.CharField(max_length=100, unique=True, verbose_name="Tên chức vụ")
-
     class Meta:
         verbose_name = "Chức Vụ"
         verbose_name_plural = "Các Chức Vụ"
-
     def __str__(self):
         return self.ten_chuc_vu
 
@@ -313,8 +266,6 @@ class NhanVien(models.Model):
         DANG_LAM_VIEC = 'DLV', 'Đang làm việc'
         DA_NGHI_VIEC = 'DNV', 'Đã nghỉ việc'
         TAM_NGHI = 'TN', 'Tạm nghỉ'
-
-    # Liên kết 1-1 với model User có sẵn của Django để quản lý đăng nhập
     user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Tài khoản")
     ma_nhan_vien = models.CharField(max_length=20, unique=True, verbose_name="Mã nhân viên")
     ho_ten = models.CharField(max_length=100, verbose_name="Họ và tên")
@@ -324,39 +275,22 @@ class NhanVien(models.Model):
     phong_ban = models.ForeignKey(PhongBan, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Phòng ban")
     chuc_vu = models.ForeignKey(ChucVu, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Chức vụ")
     ngay_vao_lam = models.DateField(verbose_name="Ngày vào làm")
-    luong_co_ban = models.DecimalField(
-        max_digits=15, 
-        decimal_places=0, 
-        default=0, 
-        verbose_name="Lương cơ bản (VND)"
-    )
-    trang_thai = models.CharField(
-        max_length=3,
-        choices=TrangThaiLamViec.choices,
-        default=TrangThaiLamViec.DANG_LAM_VIEC,
-        verbose_name="Trạng thái làm việc"
-    )
-    
+    luong_co_ban = models.DecimalField(max_digits=15, decimal_places=0, default=0, verbose_name="Lương cơ bản (VND)")
+    trang_thai = models.CharField(max_length=3, choices=TrangThaiLamViec.choices, default=TrangThaiLamViec.DANG_LAM_VIEC, verbose_name="Trạng thái làm việc")
     class Meta:
         verbose_name = "Nhân Viên"
         verbose_name_plural = "Danh sách Nhân Viên"
-
+        permissions = [
+            ("manage_nhanvien", "Có thể quản lý toàn bộ Nhân sự"),
+        ]
     def __str__(self):
         return f"{self.ma_nhan_vien} - {self.ho_ten}"
-
     def tinh_luong_thang(self, year, month):
-        if self.luong_co_ban <= 0:
-            return 0
+        if self.luong_co_ban <= 0: return 0
         _, so_ngay_trong_thang = calendar.monthrange(year, month)
-        if so_ngay_trong_thang == 0:
-            return 0
+        if so_ngay_trong_thang == 0: return 0
         luong_theo_ngay = self.luong_co_ban / so_ngay_trong_thang
-        so_ngay_di_lam = ChamCong.objects.filter(
-            nhan_vien=self,
-            ngay_cham_cong__year=year,
-            ngay_cham_cong__month=month,
-            trang_thai=ChamCong.TrangThaiChamCong.DI_LAM
-        ).count()
+        so_ngay_di_lam = ChamCong.objects.filter(nhan_vien=self, ngay_cham_cong__year=year, ngay_cham_cong__month=month, trang_thai=ChamCong.TrangThaiChamCong.DI_LAM).count()
         luong_thuc_te = luong_theo_ngay * so_ngay_di_lam
         return luong_thuc_te
 
@@ -365,23 +299,15 @@ class ChamCong(models.Model):
         DI_LAM = 'DL', 'Đi làm'
         NGHI_PHEP = 'NP', 'Nghỉ phép'
         VANG_KHONG_PHEP = 'VKP', 'Vắng không phép'
-
     nhan_vien = models.ForeignKey(NhanVien, on_delete=models.CASCADE, verbose_name="Nhân viên")
     ngay_cham_cong = models.DateField(verbose_name="Ngày chấm công")
-    trang_thai = models.CharField(
-        max_length=3,
-        choices=TrangThaiChamCong.choices,
-        default=TrangThaiChamCong.DI_LAM,
-        verbose_name="Trạng thái"
-    )
+    trang_thai = models.CharField(max_length=3, choices=TrangThaiChamCong.choices, default=TrangThaiChamCong.DI_LAM, verbose_name="Trạng thái")
     gio_check_in = models.TimeField(null=True, blank=True, verbose_name="Giờ check-in")
     gio_check_out = models.TimeField(null=True, blank=True, verbose_name="Giờ check-out")
     ghi_chu = models.TextField(blank=True, null=True, verbose_name="Ghi chú")
-
     class Meta:
         verbose_name = "Chấm Công"
         verbose_name_plural = "Dữ liệu Chấm Công"
         unique_together = ('nhan_vien', 'ngay_cham_cong')
-
     def __str__(self):
         return f"Chấm công {self.nhan_vien.ho_ten} - {self.ngay_cham_cong}"
