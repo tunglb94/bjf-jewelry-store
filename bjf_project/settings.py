@@ -88,6 +88,12 @@ USE_TZ = True
 # Static & Media files
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
+# THÊM DÒNG NÀY để Django tìm thấy thư mục static chứa logo của bạn
+STATICFILES_DIRS = [
+    os.path.join(BASE_DIR, 'static'),
+]
+
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
@@ -114,61 +120,39 @@ CKEDITOR_CONFIGS = {
 # =======================================================
 
 JAZZMIN_SETTINGS = {
-    "site_title": "BJF Admin",
-    "site_header": "BJF JEWELRY",
-    "welcome_sign": "Chào mừng đến với trang quản trị BJF",
-    "copyright": "BJF Jewelry Ltd",
+    "site_title": "BJF Group Admin",
+    "site_header": "BJF GROUP",
+    "site_brand": "TẬP ĐOÀN BJF GROUP",
+    
+    # Sử dụng logo bạn đã cung cấp
+    "site_logo": "img/logo_bjf_group.png",
+    "login_logo": "img/logo_bjf_group.png",
+    
+    "welcome_sign": "Chào mừng đến với trang quản trị Tập đoàn BJF Group",
+    "copyright": "BJF Group Ltd",
 
-    # --- PHẦN SỬA LỖI ---
-    # Thay vì dùng dictionary để tạo nhóm, chúng ta chỉ cần liệt kê các model
-    # theo thứ tự mong muốn. Jazzmin sẽ tự động gom chúng theo App.
     "order_with_respect_to": [
-        # Nhân sự
-        "store.NhanVien",
-        "store.ChamCong",
-        "store.PhongBan",
-        "store.ChucVu",
-        
-        # Kinh doanh
-        "store.Order",
-        "store.Product",
-        "store.Category",
-        "store.Testimonial",
-        "store.ContactMessage",
-        
-        # Nội dung & Marketing
-        "store.Post",
-        "store.Banner",
-        "store.AboutPage",
-        
-        # Tuyển dụng
-        "store.JobPosting",
-        
-        # Hệ thống
-        "auth.User",
-        "auth.Group",
+        "store.NhanVien", "store.ChamCong", "store.PhongBan", "store.ChucVu",
+        "store.BatDongSan",
+        "store.Order", "store.Product", "store.Category",
+        "store.Post", "store.Banner",
+        "auth.User", "auth.Group",
         "store.SiteConfiguration",
-        "store.ActionButton",
     ],
 
     "icons": {
-        "auth": "fas fa-users-cog",
         "auth.user": "fas fa-user",
         "auth.Group": "fas fa-users",
         "store.NhanVien": "fas fa-user-tie",
         "store.ChamCong": "fas fa-calendar-check",
         "store.PhongBan": "fas fa-building",
         "store.ChucVu": "fas fa-id-badge",
+        "store.BatDongSan": "fas fa-city",
         "store.Order": "fas fa-file-invoice-dollar",
         "store.Product": "fas fa-gem",
         "store.Category": "fas fa-tags",
         "store.Post": "fas fa-newspaper",
         "store.Banner": "fas fa-image",
         "store.SiteConfiguration": "fas fa-cog",
-        "store.JobPosting": "fas fa-briefcase",
-        "store.Testimonial": "fas fa-comments",
-        "store.ContactMessage": "fas fa-envelope",
-        "store.AboutPage": "fas fa-info-circle",
-        "store.ActionButton": "fas fa-mouse-pointer",
     },
 }
