@@ -28,7 +28,7 @@ INSTALLED_APPS = [
     'solo',
     'store.apps.StoreConfig',
     'ckeditor',
-    'ckeditor_uploader', # THÊM DÒNG NÀY ĐỂ KÍCH HOẠT UPLOADER
+    'ckeditor_uploader',
     'django_group_by',
 ]
 
@@ -89,9 +89,9 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# THÊM DÒNG NÀY để Django tìm thấy thư mục static chứa logo của bạn
+# Đường dẫn chính xác để Django tìm thấy thư mục static chứa logo của bạn
 STATICFILES_DIRS = [
-    os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'bjf_project', 'static'),
 ]
 
 MEDIA_URL = '/media/'
@@ -120,7 +120,7 @@ CKEDITOR_CONFIGS = {
 # =======================================================
 
 JAZZMIN_SETTINGS = {
-    "site_title": "BJF Group Admin",
+    "site_title": "BJF Admin",
     "site_header": "BJF GROUP",
     "site_brand": "TẬP ĐOÀN BJF GROUP",
     
@@ -132,12 +132,35 @@ JAZZMIN_SETTINGS = {
     "copyright": "BJF Group Ltd",
 
     "order_with_respect_to": [
-        "store.NhanVien", "store.ChamCong", "store.PhongBan", "store.ChucVu",
+        # Nhân sự
+        "store.NhanVien",
+        "store.ChamCong",
+        "store.PhongBan",
+        "store.ChucVu",
+        
+        # Bất động sản
         "store.BatDongSan",
-        "store.Order", "store.Product", "store.Category",
-        "store.Post", "store.Banner",
-        "auth.User", "auth.Group",
+        
+        # Kinh doanh
+        "store.Order",
+        "store.Product",
+        "store.Category",
+        "store.Testimonial",
+        "store.ContactMessage",
+        
+        # Nội dung & Marketing
+        "store.Post",
+        "store.Banner",
+        "store.AboutPage",
+        
+        # Tuyển dụng
+        "store.JobPosting",
+        
+        # Hệ thống
+        "auth.User",
+        "auth.Group",
         "store.SiteConfiguration",
+        "store.ActionButton",
     ],
 
     "icons": {
@@ -154,5 +177,10 @@ JAZZMIN_SETTINGS = {
         "store.Post": "fas fa-newspaper",
         "store.Banner": "fas fa-image",
         "store.SiteConfiguration": "fas fa-cog",
+        "store.JobPosting": "fas fa-briefcase",
+        "store.Testimonial": "fas fa-comments",
+        "store.ContactMessage": "fas fa-envelope",
+        "store.AboutPage": "fas fa-info-circle",
+        "store.ActionButton": "fas fa-mouse-pointer",
     },
 }
