@@ -1,17 +1,29 @@
 # bjf_project/store/admin.py
 
-from django.contrib import admin
+from django.contrib import admin, messages
 from solo.admin import SingletonModelAdmin
-# --- IMPORT MỚI ---
 from django.utils import timezone
-# ------------------
+
+# --- Imports cho tính năng xuất file DOCX ---
+from django.http import HttpResponse
+from docxtpl import DocxTemplate, InlineImage
+from docx.shared import Cm
+import io
+# --------------------------------------------
+
+# --- Imports cho tính năng gán quyền hàng loạt ---
+from django.contrib.auth.models import Group, Permission
+from django.contrib.contenttypes.models import ContentType
+from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
+# ------------------------------------------------
+
 from .models import (
     Category, Product, Post, SiteConfiguration, 
     ContactMessage, Order, OrderItem, Banner, 
     ProductVariation, ProductImage, ActionButton, Testimonial,
     AboutPage, JobPosting,
-    # --- CÁC MODEL MỚI CHO HỆ THỐNG NHÂN SỰ ---
-    PhongBan, ChucVu, NhanVien, ChamCong
+    PhongBan, ChucVu, NhanVien, ChamCong,
+    BatDongSan # Model Bất động sản mới
 )
 
 @admin.register(Category)
@@ -38,6 +50,8 @@ class ProductAdmin(admin.ModelAdmin):
     search_fields = ('name', 'sku', 'description')
     prepopulated_fields = {'slug': ('name',)}
     inlines = [ProductImageInline, ProductVariationInline]
+
+# ... (Các class Admin khác giữ nguyên) ...
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
@@ -107,25 +121,9 @@ class TestimonialAdmin(admin.ModelAdmin):
 
 @admin.register(AboutPage)
 class AboutPageAdmin(SingletonModelAdmin):
-    fieldsets = (
-        ('Section Hero', {
-            'fields': ('hero_title', 'hero_subtitle', 'hero_image')
-        }),
-        ('Section Triết lý', {
-            'fields': ('philosophy_tagline', 'philosophy_title', 'philosophy_content', 'philosophy_image')
-        }),
-        ('Section Lịch sử', {
-            'fields': (
-                'history_title', 'history_subtitle',
-                'milestone1_year', 'milestone1_text', 'milestone1_image',
-                'milestone2_year', 'milestone2_text', 'milestone2_image',
-                'milestone3_year', 'milestone3_text', 'milestone3_image',
-            )
-        }),
-         ('Section Chế tác', {
-            'fields': ('craftsmanship_title', 'craftsmanship_subtitle')
-        }),
-    )
+    # ... fieldsets ...
+    pass
+
 
 @admin.register(JobPosting)
 class JobPostingAdmin(admin.ModelAdmin):
@@ -134,6 +132,7 @@ class JobPostingAdmin(admin.ModelAdmin):
     search_fields = ('title', 'description', 'requirements')
     prepopulated_fields = {'slug': ('title',)}
     list_editable = ('is_active',)
+
 
 # =======================================================
 # ==            ADMIN CHO HỆ THỐNG NHÂN SỰ             ==
@@ -179,3 +178,101 @@ class ChamCongAdmin(admin.ModelAdmin):
 
 admin.site.register(PhongBan)
 admin.site.register(ChucVu)
+
+# =======================================================
+# ==         ADMIN CHO HỆ THỐNG BẤT ĐỘNG SẢN           ==
+# =======================================================
+
+def export_as_docx(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
+        return
+
+    bds = queryset.first()
+    
+    doc = DocxTemplate("store/docx_templates/template.docx")
+    
+    context = {
+        'id_tai_san': bds.id_tai_san,
+        'loai_bds': bds.loai_bds,
+        'dia_chi': bds.dia_chi,
+        'chi_tiet_su_dung_dat': bds.chi_tiet_su_dung_dat,
+        'mat_tien': bds.mat_tien,
+        'chieu_sau': bds.chieu_sau,
+        'huong': bds.huong,
+        'phap_ly': bds.phap_ly,
+        'tinh_trang_xay_dung': bds.tinh_trang_xay_dung,
+        'hien_trang_su_dung': bds.hien_trang_su_dung,
+        'gia_rao_cam_co': f"{bds.gia_rao_cam_co:,.0f} VNĐ",
+        'gia_chot_ky_vong': f"{bds.gia_chot_ky_vong:,.0f} VNĐ",
+        'phan_tich_tiem_nang': bds.phan_tich_tiem_nang,
+        'uu_diem_vi_tri': bds.uu_diem_vi_tri,
+        'nhuoc_diem': bds.nhuoc_diem,
+        'quy_hoach': bds.quy_hoach,
+        'nguoi_khao_sat': bds.nguoi_khao_sat.ho_ten if bds.nguoi_khao_sat else "",
+        'sdt_nguoi_khao_sat': bds.nguoi_khao_sat.so_dien_thoai if bds.nguoi_khao_sat else "",
+        'thoi_gian_khao_sat': timezone.localtime(bds.thoi_gian_khao_sat).strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
+        'ghi_chu_them': bds.ghi_chu_them,
+        'link_so_do': bds.link_so_do,
+    }
+    
+    if bds.anh_so_do:
+        context['anh_so_do'] = InlineImage(doc, bds.anh_so_do.path, width=Cm(15))
+    if bds.anh_hien_trang_1:
+        context['anh_hien_trang_1'] = InlineImage(doc, bds.anh_hien_trang_1.path, width=Cm(15))
+        
+    doc.render(context)
+    
+    buffer = io.BytesIO()
+    doc.save(buffer)
+    buffer.seek(0)
+    
+    response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
+    response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.docx'
+    return response
+
+export_as_docx.short_description = "Tải về file thông tin BĐS (.docx)"
+
+@admin.register(BatDongSan)
+class BatDongSanAdmin(admin.ModelAdmin):
+    list_display = ('id_tai_san', 'dia_chi', 'loai_bds', 'nguoi_khao_sat', 'thoi_gian_khao_sat')
+    list_filter = ('loai_bds', 'nguoi_khao_sat')
+    search_fields = ('id_tai_san', 'dia_chi')
+    actions = [export_as_docx]
+    
+    fieldsets = (
+        ("I. Thông tin cơ bản", {"fields": ("id_tai_san", "loai_bds", "dia_chi", "google_maps_link", "chi_tiet_su_dung_dat", "mat_tien", "chieu_sau", "huong", "phap_ly", "tinh_trang_xay_dung", "hien_trang_su_dung")}),
+        ("II. Giá và giao dịch", {"fields": ("gia_rao_cam_co", "gia_chot_ky_vong", "don_gia_tham_khao")}),
+        ("III. Phân tích", {"fields": ("phan_tich_tiem_nang", "uu_diem_vi_tri", "nhuoc_diem", "quy_hoach")}),
+        ("V. Khảo sát", {"fields": ("nguoi_khao_sat", "thoi_gian_khao_sat", "ghi_chu_them")}),
+        ("Hình ảnh & Tài liệu", {"fields": ("link_so_do", "anh_so_do", "anh_hien_trang_1", "anh_hien_trang_2")}),
+    )
+
+# =======================================================
+# ==          TÙY CHỈNH TRANG QUẢN LÝ GROUP            ==
+# =======================================================
+
+def assign_hr_permissions(modeladmin, request, queryset):
+    hr_models = [NhanVien, ChamCong, PhongBan, ChucVu]
+    content_types = ContentType.objects.get_for_models(*hr_models)
+    permissions = Permission.objects.filter(content_type__in=content_types.values())
+    for group in queryset:
+        group.permissions.add(*permissions)
+    modeladmin.message_user(request, f"Đã gán thành công {permissions.count()} quyền Nhân sự cho {queryset.count()} nhóm.", messages.SUCCESS)
+assign_hr_permissions.short_description = "Gán toàn bộ quyền Quản lý Nhân sự"
+
+
+def assign_sales_permissions(modeladmin, request, queryset):
+    sales_models = [Order, Product, Category, Testimonial, ContactMessage]
+    content_types = ContentType.objects.get_for_models(*sales_models)
+    permissions = Permission.objects.filter(content_type__in=content_types.values())
+    for group in queryset:
+        group.permissions.add(*permissions)
+    modeladmin.message_user(request, f"Đã gán thành công {permissions.count()} quyền Kinh doanh cho {queryset.count()} nhóm.", messages.SUCCESS)
+assign_sales_permissions.short_description = "Gán toàn bộ quyền Quản lý Kinh doanh"
+
+class CustomGroupAdmin(BaseGroupAdmin):
+    actions = [assign_hr_permissions, assign_sales_permissions]
+
+admin.site.unregister(Group)
+admin.site.register(Group, CustomGroupAdmin)

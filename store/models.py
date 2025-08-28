@@ -311,3 +311,53 @@ class ChamCong(models.Model):
         unique_together = ('nhan_vien', 'ngay_cham_cong')
     def __str__(self):
         return f"Chấm công {self.nhan_vien.ho_ten} - {self.ngay_cham_cong}"
+
+# =======================================================
+# ==         HỆ THỐNG QUẢN LÝ BẤT ĐỘNG SẢN           ==
+# =======================================================
+
+class BatDongSan(models.Model):
+    # I. Thông tin cơ bản
+    id_tai_san = models.CharField(max_length=50, unique=True, verbose_name="ID tài sản")
+    loai_bds = models.CharField(max_length=100, default="Đất nền", verbose_name="Loại BĐS")
+    dia_chi = models.CharField(max_length=255, verbose_name="Địa chỉ")
+    google_maps_link = models.URLField(blank=True, null=True, verbose_name="Link Google Maps")
+    chi_tiet_su_dung_dat = models.CharField(max_length=255, verbose_name="Chi tiết sử dụng đất", help_text="Ví dụ: Đất thổ cư 5100 m2")
+    mat_tien = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Mặt tiền (m)")
+    chieu_sau = models.DecimalField(max_digits=10, decimal_places=2, default=0, verbose_name="Chiều sâu (m)")
+    huong = models.CharField(max_length=50, blank=True, verbose_name="Hướng")
+    phap_ly = models.CharField(max_length=100, default="Sổ đỏ/Sổ hồng", verbose_name="Pháp lý")
+    tinh_trang_xay_dung = models.CharField(max_length=100, default="Đất trống", verbose_name="Tình trạng xây dựng")
+    hien_trang_su_dung = models.TextField(blank=True, verbose_name="Hiện trạng sử dụng")
+
+    # II. Giá và giao dịch
+    gia_rao_cam_co = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Giá chủ nhà rao cầm cố (VNĐ)")
+    gia_chot_ky_vong = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Khoảng giá chốt kỳ vọng (VNĐ)")
+    don_gia_tham_khao = models.DecimalField(max_digits=20, decimal_places=0, default=0, verbose_name="Đơn giá tham khảo (VNĐ/m2)")
+
+    # III. Phân tích tiềm năng
+    phan_tich_tiem_nang = models.TextField(blank=True, verbose_name="Phân tích tiềm năng và hạ tầng")
+    uu_diem_vi_tri = models.TextField(blank=True, verbose_name="Ưu điểm vị trí")
+    nhuoc_diem = models.TextField(blank=True, verbose_name="Nhược điểm/Hạn chế")
+    quy_hoach = models.TextField(blank=True, verbose_name="Quy hoạch/Kế hoạch sử dụng đất")
+
+    # V. Người khảo sát
+    nguoi_khao_sat = models.ForeignKey(NhanVien, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Người khảo sát")
+    thoi_gian_khao_sat = models.DateField(null=True, blank=True, verbose_name="Thời gian khảo sát")
+    ghi_chu_them = models.TextField(blank=True, verbose_name="Ghi chú thêm")
+
+    # Hình ảnh
+    link_so_do = models.URLField(blank=True, verbose_name="Link sổ đỏ (Google Drive)")
+    anh_so_do = models.ImageField(upload_to='bds/so_do/', blank=True, null=True, verbose_name="Ảnh bản đồ vị trí/sổ đỏ")
+    anh_hien_trang_1 = models.ImageField(upload_to='bds/hien_trang/', blank=True, null=True, verbose_name="Ảnh hiện trạng 1")
+    anh_hien_trang_2 = models.ImageField(upload_to='bds/hien_trang/', blank=True, null=True, verbose_name="Ảnh hiện trạng 2")
+
+    class Meta:
+        verbose_name = "Bất động sản"
+        verbose_name_plural = "Danh sách Bất động sản"
+        permissions = [
+            ("manage_batdongsan", "Có thể quản lý toàn bộ Bất động sản"),
+        ]
+
+    def __str__(self):
+        return self.id_tai_san
