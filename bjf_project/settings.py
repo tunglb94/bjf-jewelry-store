@@ -89,7 +89,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 
-# Đường dẫn chính xác để Django tìm thấy thư mục static chứa logo của bạn
+# Đường dẫn chính xác để Django tìm thấy thư mục static chứa logo và CSS
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'bjf_project', 'static'),
 ]
@@ -124,43 +124,22 @@ JAZZMIN_SETTINGS = {
     "site_header": "BJF GROUP",
     "site_brand": "TẬP ĐOÀN BJF GROUP",
     
-    # Sử dụng logo bạn đã cung cấp
     "site_logo": "img/logo_bjf_group.png",
     "login_logo": "img/logo_bjf_group.png",
     
     "welcome_sign": "Chào mừng đến với trang quản trị Tập đoàn BJF Group",
     "copyright": "BJF Group Ltd",
+    
+    # THÊM DÒNG NÀY ĐỂ NHẬN FILE CSS TÙY CHỈNH
+    "custom_css": "css/custom_jazzmin.css",
 
     "order_with_respect_to": [
-        # Nhân sự
-        "store.NhanVien",
-        "store.ChamCong",
-        "store.PhongBan",
-        "store.ChucVu",
-        
-        # Bất động sản
+        "store.NhanVien", "store.ChamCong", "store.PhongBan", "store.ChucVu",
         "store.BatDongSan",
-        
-        # Kinh doanh
-        "store.Order",
-        "store.Product",
-        "store.Category",
-        "store.Testimonial",
-        "store.ContactMessage",
-        
-        # Nội dung & Marketing
-        "store.Post",
-        "store.Banner",
-        "store.AboutPage",
-        
-        # Tuyển dụng
-        "store.JobPosting",
-        
-        # Hệ thống
-        "auth.User",
-        "auth.Group",
+        "store.Order", "store.Product", "store.Category",
+        "store.Post", "store.Banner",
+        "auth.User", "auth.Group",
         "store.SiteConfiguration",
-        "store.ActionButton",
     ],
 
     "icons": {
@@ -177,10 +156,5 @@ JAZZMIN_SETTINGS = {
         "store.Post": "fas fa-newspaper",
         "store.Banner": "fas fa-image",
         "store.SiteConfiguration": "fas fa-cog",
-        "store.JobPosting": "fas fa-briefcase",
-        "store.Testimonial": "fas fa-comments",
-        "store.ContactMessage": "fas fa-envelope",
-        "store.AboutPage": "fas fa-info-circle",
-        "store.ActionButton": "fas fa-mouse-pointer",
     },
 }

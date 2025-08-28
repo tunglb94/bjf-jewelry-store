@@ -1,0 +1,30 @@
+/* bjf_project/static/css/custom_jazzmin.css */
+
+/* Điều chỉnh logo trên trang đăng nhập */
+.login-box .login-logo img {
+    max-width: 250px; /* Chiều rộng tối đa mong muốn */
+    height: auto;     /* Duy trì tỷ lệ khung hình */
+    display: block;   /* Đảm bảo căn giữa hoạt động */
+    margin: 0 auto;   /* Căn giữa logo */
+    padding-top: 20px; /* Thêm khoảng cách trên đầu logo */
+    padding-bottom: 20px; /* Thêm khoảng cách dưới logo */
+}
+
+/* Điều chỉnh logo trên thanh điều hướng (admin bar) */
+.brand-link .brand-image {
+    max-height: 35px; /* Chiều cao tối đa cho logo nhỏ trên thanh điều hướng */
+    width: auto;      /* Duy trì tỷ lệ khung hình */
+}
+
+/* Nếu logo trên thanh điều hướng vẫn bị cắt, thử điều chỉnh thêm */
+.main-sidebar .brand-link {
+    height: 60px; /* Tăng chiều cao của vùng chứa logo nếu cần */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Căn giữa văn bản thương hiệu bên cạnh logo trên thanh điều hướng */
+.brand-text {
+    text-align: center;
+}
