@@ -20,6 +20,9 @@ from .models import (
     PhongBan, ChucVu, NhanVien, ChamCong,
     BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan
 )
+# Thư viện mới để chuyển đổi DOCX sang PDF
+from docx2pdf import convert
+import tempfile
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
@@ -204,13 +207,8 @@ class HinhAnhBatDongSanInline(admin.TabularInline):
     verbose_name_plural = "Thêm các hình ảnh (sổ đỏ, hiện trạng...)"
 
 
-def export_as_docx(modeladmin, request, queryset):
-    if queryset.count() != 1:
-        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
-        return
-
-    bds = queryset.first()
-
+def _create_docx(bds):
+    """Hàm nội bộ để tạo file docx trong bộ nhớ."""
     template_path = os.path.join(settings.BASE_DIR, 'store', 'docx_templates', 'template.docx')
     doc = DocxTemplate(template_path)
 
@@ -238,51 +236,80 @@ def export_as_docx(modeladmin, request, queryset):
     }
 
     hinh_anh_list = list(bds.hinh_anh.all())
-    if not hinh_anh_list:
-        messages.warning(request, "Bất động sản này không có hình ảnh nào để chèn vào file.")
-
     for i, hinh_anh in enumerate(hinh_anh_list[:3]):
-        if hinh_anh.image and hasattr(hinh_anh.image, 'path'):
-            image_path = hinh_anh.image.path
-            
-            # BƯỚC 1: KIỂM TRA SỰ TỒN TẠI
-            if not os.path.exists(image_path):
-                messages.error(request, f"Lỗi nghiêm trọng: Không tìm thấy tệp ảnh {i+1} tại đường dẫn: {image_path}")
-                return
+        if hinh_anh.image and hasattr(hinh_anh.image, 'path') and os.path.exists(hinh_anh.image.path):
+            context[f'anh_{i+1}'] = InlineImage(doc, hinh_anh.image.path, width=Cm(15))
 
-            # BƯỚC 2: KIỂM TRA QUYỀN ĐỌC
-            try:
-                with open(image_path, 'rb') as f:
-                    pass  # Nếu mở được file tức là có quyền đọc
-            except IOError as e:
-                messages.error(request, f"Lỗi nghiêm trọng: Không có quyền đọc tệp ảnh {i+1} tại đường dẫn: {image_path}. Lỗi: {e}")
-                return
-
-            # BƯỚC 3: THỬ TẠO ĐỐI TƯỢNG INLINEIMAGE
-            try:
-                context[f'anh_{i+1}'] = InlineImage(doc, image_path, width=Cm(15))
-            except Exception as e:
-                messages.error(request, f"Lỗi khi xử lý ảnh {i+1} với docxtpl: {e}")
-                return
-    
     doc.render(context)
-
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
+    return buffer
 
+def export_as_docx(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
+        return
+
+    bds = queryset.first()
+    buffer = _create_docx(bds)
+    
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.docx'
     return response
-
 export_as_docx.short_description = "Tải về file thông tin BĐS (.docx)"
+
+def export_as_pdf(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
+        return
+
+    bds = queryset.first()
+    docx_buffer = _create_docx(bds)
+
+    try:
+        # Tạo file tạm thời cho DOCX và PDF
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as docx_tmp:
+            docx_tmp.write(docx_buffer.getvalue())
+            docx_path = docx_tmp.name
+        
+        pdf_path = docx_path.replace(".docx", ".pdf")
+        
+        # Chuyển đổi DOCX sang PDF
+        convert(docx_path, pdf_path)
+        
+        # Đọc file PDF đã tạo
+        with open(pdf_path, 'rb') as pdf_file:
+            pdf_data = pdf_file.read()
+            
+        # Tạo response để tải về
+        response = HttpResponse(pdf_data, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.pdf'
+        
+        # Xóa các file tạm
+        os.remove(docx_path)
+        os.remove(pdf_path)
+        
+        return response
+
+    except Exception as e:
+        modeladmin.message_user(request, f"Lỗi khi chuyển đổi sang PDF: {e}", messages.ERROR)
+        # Xóa file tạm nếu có lỗi
+        if 'docx_path' in locals() and os.path.exists(docx_path):
+            os.remove(docx_path)
+        if 'pdf_path' in locals() and os.path.exists(pdf_path):
+            os.remove(pdf_path)
+        return
+export_as_pdf.short_description = "Tải về file thông tin BĐS (.pdf)"
+
 
 @admin.register(BatDongSan)
 class BatDongSanAdmin(admin.ModelAdmin):
     list_display = ('id_tai_san', 'dia_chi', 'loai_bds', 'nguoi_khao_sat')
     list_filter = ('loai_bds', 'nguoi_khao_sat')
     search_fields = ('id_tai_san', 'dia_chi')
-    actions = [export_as_docx]
+    # Thêm action mới vào đây
+    actions = [export_as_docx, export_as_pdf]
 
     inlines = [HinhAnhBatDongSanInline]
 
