@@ -237,21 +237,30 @@ def export_as_docx(modeladmin, request, queryset):
         'ghi_chu_them': bds.ghi_chu_them,
     }
 
-    try:
-        hinh_anh_list = list(bds.hinh_anh.all())
+    # === PHẦN GỠ LỖI BẮT ĐẦU ===
+    image_paths_to_check = []
+    hinh_anh_list = list(bds.hinh_anh.all())
 
-        if len(hinh_anh_list) > 0 and hinh_anh_list[0].image:
-            context['anh_1'] = InlineImage(doc, hinh_anh_list[0].image.path, width=Cm(15))
-
-        if len(hinh_anh_list) > 1 and hinh_anh_list[1].image:
-            context['anh_2'] = InlineImage(doc, hinh_anh_list[1].image.path, width=Cm(15))
-
-        if len(hinh_anh_list) > 2 and hinh_anh_list[2].image:
-            context['anh_3'] = InlineImage(doc, hinh_anh_list[2].image.path, width=Cm(15))
-
-    except FileNotFoundError:
-        modeladmin.message_user(request, "Lỗi: Không tìm thấy file ảnh trên ổ đĩa. Vui lòng kiểm tra lại file đã upload.", messages.ERROR)
-        return
+    for i, hinh_anh in enumerate(hinh_anh_list[:3]):
+        if hinh_anh.image and hasattr(hinh_anh.image, 'path'):
+            image_path = hinh_anh.image.path
+            image_paths_to_check.append(image_path)
+            
+            # Kiểm tra xem tệp có tồn tại không
+            if os.path.exists(image_path):
+                try:
+                    context[f'anh_{i+1}'] = InlineImage(doc, image_path, width=Cm(15))
+                except Exception as e:
+                    messages.error(request, f"Lỗi khi xử lý ảnh {i+1}: {e}")
+                    return
+            else:
+                # Nếu không tồn tại, báo lỗi chi tiết
+                messages.error(request, f"Lỗi: Không tìm thấy tệp ảnh {i+1} tại đường dẫn: {image_path}")
+                return
+    
+    if not image_paths_to_check:
+        messages.warning(request, "Bất động sản này không có hình ảnh nào để chèn vào file.")
+    # === PHẦN GỠ LỖI KẾT THÚC ===
 
     doc.render(context)
 
@@ -280,8 +289,6 @@ class BatDongSanAdmin(admin.ModelAdmin):
         ("III. Phân tích", {"fields": ("phan_tich_tiem_nang", "uu_diem_vi_tri", "nhuoc_diem", "quy_hoach")}),
         ("V. Khảo sát", {"fields": ("nguoi_khao_sat", "thoi_gian_khao_sat", "ghi_chu_them")}),
     )
-    # Dòng dưới đây đã được xóa đi để hiển thị các nút chức năng
-    # raw_id_fields = ('loai_bds', 'nguoi_khao_sat')
 
 # =======================================================
 # ==          TÙY CHỈNH TRANG QUẢN LÝ GROUP            ==
