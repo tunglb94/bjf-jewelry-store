@@ -13,8 +13,8 @@ from django.contrib.auth.models import Group, Permission
 from django.contrib.contenttypes.models import ContentType
 from django.contrib.auth.admin import GroupAdmin as BaseGroupAdmin
 from .models import (
-    Category, Product, Post, SiteConfiguration, 
-    ContactMessage, Order, OrderItem, Banner, 
+    Category, Product, Post, SiteConfiguration,
+    ContactMessage, Order, OrderItem, Banner,
     ProductVariation, ProductImage, ActionButton, Testimonial,
     AboutPage, JobPosting,
     PhongBan, ChucVu, NhanVien, ChamCong,
@@ -159,7 +159,7 @@ class NhanVienAdmin(admin.ModelAdmin):
     search_fields = ('ma_nhan_vien', 'ho_ten', 'email', 'so_dien_thoai')
     ordering = ('ho_ten',)
     inlines = [ChamCongInline]
-    
+
     fieldsets = (
         ('Thông tin cá nhân', {
             'fields': ('ho_ten', 'ngay_sinh', 'so_dien_thoai', 'email')
@@ -173,7 +173,7 @@ class NhanVienAdmin(admin.ModelAdmin):
         today = timezone.now()
         luong = obj.tinh_luong_thang(today.year, today.month)
         return f"{int(luong):,} VND"
-    
+
     hien_thi_luong_thang_nay.short_description = f"Lương tháng {timezone.now().month}/{timezone.now().year}"
 
 @admin.register(ChamCong)
@@ -210,10 +210,10 @@ def export_as_docx(modeladmin, request, queryset):
         return
 
     bds = queryset.first()
-    
+
     template_path = os.path.join(settings.BASE_DIR, 'store', 'docx_templates', 'template.docx')
     doc = DocxTemplate(template_path)
-    
+
     context = {
         'id_tai_san': bds.id_tai_san,
         'loai_bds': bds.loai_bds.ten_loai if bds.loai_bds else "",
@@ -236,29 +236,29 @@ def export_as_docx(modeladmin, request, queryset):
         'thoi_gian_khao_sat': bds.thoi_gian_khao_sat.strftime('%d/%m/%Y') if bds.thoi_gian_khao_sat else "",
         'ghi_chu_them': bds.ghi_chu_them,
     }
-    
+
     try:
         hinh_anh_list = list(bds.hinh_anh.all())
-        
+
         if len(hinh_anh_list) > 0 and hinh_anh_list[0].image:
             context['anh_1'] = InlineImage(doc, hinh_anh_list[0].image.path, width=Cm(15))
-                
+
         if len(hinh_anh_list) > 1 and hinh_anh_list[1].image:
             context['anh_2'] = InlineImage(doc, hinh_anh_list[1].image.path, width=Cm(15))
 
         if len(hinh_anh_list) > 2 and hinh_anh_list[2].image:
             context['anh_3'] = InlineImage(doc, hinh_anh_list[2].image.path, width=Cm(15))
-    
+
     except FileNotFoundError:
         modeladmin.message_user(request, "Lỗi: Không tìm thấy file ảnh trên ổ đĩa. Vui lòng kiểm tra lại file đã upload.", messages.ERROR)
         return
-            
+
     doc.render(context)
-    
+
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    
+
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.docx'
     return response
@@ -271,17 +271,17 @@ class BatDongSanAdmin(admin.ModelAdmin):
     list_filter = ('loai_bds', 'nguoi_khao_sat')
     search_fields = ('id_tai_san', 'dia_chi')
     actions = [export_as_docx]
-    
+
     inlines = [HinhAnhBatDongSanInline]
-    
+
     fieldsets = (
         ("I. Thông tin cơ bản", {"fields": ("id_tai_san", "loai_bds", "dia_chi", "google_maps_link", "chi_tiet_su_dung_dat", "mat_tien", "chieu_sau", "huong", "phap_ly", "tinh_trang_xay_dung", "hien_trang_su_dung")}),
         ("II. Giá và giao dịch", {"fields": ("gia_rao_cam_co", "gia_chot_ky_vong", "don_gia_tham_khao")}),
         ("III. Phân tích", {"fields": ("phan_tich_tiem_nang", "uu_diem_vi_tri", "nhuoc_diem", "quy_hoach")}),
         ("V. Khảo sát", {"fields": ("nguoi_khao_sat", "thoi_gian_khao_sat", "ghi_chu_them")}),
     )
-    # Thêm dòng này để kích hoạt dấu "+"
-    raw_id_fields = ('loai_bds', 'nguoi_khao_sat')
+    # Dòng dưới đây đã được xóa đi để hiển thị các nút chức năng
+    # raw_id_fields = ('loai_bds', 'nguoi_khao_sat')
 
 # =======================================================
 # ==          TÙY CHỈNH TRANG QUẢN LÝ GROUP            ==
