@@ -20,10 +20,11 @@ from .models import (
     PhongBan, ChucVu, NhanVien, ChamCong,
     BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan
 )
-# Thư viện mới để chuyển đổi DOCX sang PDF
-from docx2pdf import convert
-import tempfile
+# Thư viện mới để tạo PDF từ HTML
+from django.template.loader import render_to_string
+from weasyprint import HTML
 
+# ... (Toàn bộ các lớp Admin khác từ CategoryAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
@@ -189,7 +190,6 @@ class ChamCongAdmin(admin.ModelAdmin):
 
 admin.site.register(PhongBan)
 admin.site.register(ChucVu)
-
 # =======================================================
 # ==         ADMIN CHO HỆ THỐNG BẤT ĐỘNG SẢN           ==
 # =======================================================
@@ -207,11 +207,16 @@ class HinhAnhBatDongSanInline(admin.TabularInline):
     verbose_name_plural = "Thêm các hình ảnh (sổ đỏ, hiện trạng...)"
 
 
-def _create_docx(bds):
-    """Hàm nội bộ để tạo file docx trong bộ nhớ."""
+def export_as_docx(modeladmin, request, queryset):
+    if queryset.count() != 1:
+        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
+        return
+
+    bds = queryset.first()
+    
     template_path = os.path.join(settings.BASE_DIR, 'store', 'docx_templates', 'template.docx')
     doc = DocxTemplate(template_path)
-
+    
     context = {
         'id_tai_san': bds.id_tai_san,
         'loai_bds': bds.loai_bds.ten_loai if bds.loai_bds else "",
@@ -244,15 +249,6 @@ def _create_docx(bds):
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    return buffer
-
-def export_as_docx(modeladmin, request, queryset):
-    if queryset.count() != 1:
-        modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
-        return
-
-    bds = queryset.first()
-    buffer = _create_docx(bds)
     
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.docx'
@@ -265,50 +261,37 @@ def export_as_pdf(modeladmin, request, queryset):
         return
 
     bds = queryset.first()
-    docx_buffer = _create_docx(bds)
-
+    hinh_anh_list = list(bds.hinh_anh.all())
+    
+    context = {
+        'bds': bds,
+        'gia_rao_cam_co': f"{bds.gia_rao_cam_co:,.0f} VNĐ",
+        'gia_chot_ky_vong': f"{bds.gia_chot_ky_vong:,.0f} VNĐ",
+        'hinh_anh_list': hinh_anh_list[:3]
+    }
+    
+    # Render HTML
+    html_string = render_to_string('admin/bds_pdf_template.html', context)
+    
     try:
-        # Tạo file tạm thời cho DOCX và PDF
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".docx") as docx_tmp:
-            docx_tmp.write(docx_buffer.getvalue())
-            docx_path = docx_tmp.name
+        # Tạo PDF
+        pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
         
-        pdf_path = docx_path.replace(".docx", ".pdf")
-        
-        # Chuyển đổi DOCX sang PDF
-        convert(docx_path, pdf_path)
-        
-        # Đọc file PDF đã tạo
-        with open(pdf_path, 'rb') as pdf_file:
-            pdf_data = pdf_file.read()
-            
-        # Tạo response để tải về
-        response = HttpResponse(pdf_data, content_type='application/pdf')
-        response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.pdf'
-        
-        # Xóa các file tạm
-        os.remove(docx_path)
-        os.remove(pdf_path)
-        
+        # Tạo response
+        response = HttpResponse(pdf_file, content_type='application/pdf')
+        response['Content-Disposition'] = f'attachment; filename="{bds.id_tai_san}.pdf"'
         return response
-
     except Exception as e:
-        modeladmin.message_user(request, f"Lỗi khi chuyển đổi sang PDF: {e}", messages.ERROR)
-        # Xóa file tạm nếu có lỗi
-        if 'docx_path' in locals() and os.path.exists(docx_path):
-            os.remove(docx_path)
-        if 'pdf_path' in locals() and os.path.exists(pdf_path):
-            os.remove(pdf_path)
+        modeladmin.message_user(request, f"Lỗi khi tạo file PDF: {e}", messages.ERROR)
         return
-export_as_pdf.short_description = "Tải về file thông tin BĐS (.pdf)"
 
+export_as_pdf.short_description = "Tải về file thông tin BĐS (.pdf)"
 
 @admin.register(BatDongSan)
 class BatDongSanAdmin(admin.ModelAdmin):
     list_display = ('id_tai_san', 'dia_chi', 'loai_bds', 'nguoi_khao_sat')
     list_filter = ('loai_bds', 'nguoi_khao_sat')
     search_fields = ('id_tai_san', 'dia_chi')
-    # Thêm action mới vào đây
     actions = [export_as_docx, export_as_pdf]
 
     inlines = [HinhAnhBatDongSanInline]

@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Thông tin Bất động sản - {{ bds.id_tai_san }}</title>
+    <style>
+        @font-face {
+            font-family: 'DejaVu Sans';
+            src: url(https://github.com/dejavu-fonts/dejavu-fonts/blob/master/ttf/DejaVuSans.ttf?raw=true);
+        }
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 12pt;
+            line-height: 1.6;
+        }
+        h1, h2, h3 {
+            font-weight: bold;
+            color: #333;
+        }
+        h1 {
+            text-align: center;
+            font-size: 18pt;
+            border-bottom: 2px solid #ccc;
+            padding-bottom: 10px;
+            margin-bottom: 20px;
+        }
+        h2 {
+            font-size: 14pt;
+            margin-top: 25px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+        ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        li {
+            margin-bottom: 8px;
+        }
+        strong {
+            display: inline-block;
+            width: 200px; /* Điều chỉnh độ rộng của nhãn */
+        }
+        .image-container {
+            margin-top: 20px;
+            page-break-inside: avoid;
+        }
+        .image-container img {
+            max-width: 100%;
+            height: auto;
+            border: 1px solid #ddd;
+            padding: 5px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>THÔNG TIN BẤT ĐỘNG SẢN</h1>
+
+    <h2>I. Thông tin cơ bản về BĐS</h2>
+    <ul>
+        <li><strong>ID tài sản:</strong> {{ bds.id_tai_san }}</li>
+        <li><strong>Loại BĐS:</strong> {{ bds.loai_bds.ten_loai|default:"" }}</li>
+        <li><strong>Địa chỉ:</strong> {{ bds.dia_chi }}</li>
+        <li><strong>Chi tiết sử dụng đất:</strong> {{ bds.chi_tiet_su_dung_dat }}</li>
+        <li><strong>Mặt tiền:</strong> {{ bds.mat_tien }} m | <strong>Chiều sâu:</strong> {{ bds.chieu_sau }} m</li>
+        <li><strong>Hướng:</strong> {{ bds.huong|default:"" }}</li>
+        <li><strong>Pháp lý:</strong> {{ bds.phap_ly }}</li>
+        <li><strong>Tình trạng xây dựng:</strong> {{ bds.tinh_trang_xay_dung }}</li>
+        <li><strong>Hiện trạng sử dụng:</strong> {{ bds.hien_trang_su_dung|default:"" }}</li>
+    </ul>
+
+    <h2>II. Giá và giao dịch</h2>
+    <ul>
+        <li><strong>Giá chủ nhà rao cầm cố:</strong> {{ gia_rao_cam_co }}</li>
+        <li><strong>Khoảng giá chốt kỳ vọng:</strong> {{ gia_chot_ky_vong }}</li>
+    </ul>
+
+    <h2>III. Phân tích tiềm năng và hạn chế</h2>
+    <ul>
+        <li><strong>Dự án/Hạ tầng tương lai:</strong> {{ bds.phan_tich_tiem_nang|default:"" }}</li>
+        <li><strong>Ưu điểm vị trí:</strong> {{ bds.uu_diem_vi_tri|default:"" }}</li>
+        <li><strong>Nhược điểm/Hạn chế:</strong> {{ bds.nhuoc_diem|default:"" }}</li>
+        <li><strong>Quy hoạch:</strong> {{ bds.quy_hoach|default:"" }}</li>
+    </ul>
+
+    <h2>V. Người khảo sát</h2>
+    <ul>
+        <li><strong>Họ tên:</strong> {{ bds.nguoi_khao_sat.ho_ten|default:"" }}</li>
+        <li><strong>SĐT:</strong> {{ bds.nguoi_khao_sat.so_dien_thoai|default:"" }}</li>
+        <li><strong>Thời gian khảo sát:</strong> {% if bds.thoi_gian_khao_sat %}{{ bds.thoi_gian_khao_sat|date:"d/m/Y" }}{% endif %}</li>
+        <li><strong>Ghi chú thêm:</strong> {{ bds.ghi_chu_them|default:"" }}</li>
+    </ul>
+
+    {% if hinh_anh_list %}
+        <h1>THÔNG TIN HÌNH ẢNH KÈM THEO</h1>
+        {% for hinh_anh in hinh_anh_list %}
+            <div class="image-container">
+                <h3>Ảnh {{ forloop.counter }}: {{ hinh_anh.mo_ta }}</h3>
+                <img src="{{ hinh_anh.image.path }}">
+            </div>
+        {% endfor %}
+    {% endif %}
+
+</body>
+</html>
