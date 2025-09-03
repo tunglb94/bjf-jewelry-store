@@ -18,7 +18,7 @@ from .models import (
     ProductVariation, ProductImage, ActionButton, Testimonial,
     AboutPage, JobPosting,
     PhongBan, ChucVu, NhanVien, ChamCong,
-    BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan # SỬA LỖI: Thêm LoaiBatDongSan vào import
+    BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan
 )
 
 @admin.register(Category)
@@ -216,7 +216,6 @@ def export_as_docx(modeladmin, request, queryset):
     
     context = {
         'id_tai_san': bds.id_tai_san,
-        # SỬA LỖI: Lấy đúng tên loại BĐS từ ForeignKey
         'loai_bds': bds.loai_bds.ten_loai if bds.loai_bds else "",
         'dia_chi': bds.dia_chi,
         'chi_tiet_su_dung_dat': bds.chi_tiet_su_dung_dat,
@@ -238,22 +237,21 @@ def export_as_docx(modeladmin, request, queryset):
         'ghi_chu_them': bds.ghi_chu_them,
     }
     
-    hinh_anh_list = list(bds.hinh_anh.all())
-    
-    if len(hinh_anh_list) > 0 and hinh_anh_list[0].image:
-        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[0].image))
-        if os.path.exists(image_path):
-            context['anh_1'] = InlineImage(doc, image_path, width=Cm(15))
-            
-    if len(hinh_anh_list) > 1 and hinh_anh_list[1].image:
-        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[1].image))
-        if os.path.exists(image_path):
-            context['anh_2'] = InlineImage(doc, image_path, width=Cm(15))
+    try:
+        hinh_anh_list = list(bds.hinh_anh.all())
+        
+        if len(hinh_anh_list) > 0 and hinh_anh_list[0].image:
+            context['anh_1'] = InlineImage(doc, hinh_anh_list[0].image.path, width=Cm(15))
+                
+        if len(hinh_anh_list) > 1 and hinh_anh_list[1].image:
+            context['anh_2'] = InlineImage(doc, hinh_anh_list[1].image.path, width=Cm(15))
 
-    if len(hinh_anh_list) > 2 and hinh_anh_list[2].image:
-        image_path = os.path.join(settings.MEDIA_ROOT, str(hinh_anh_list[2].image))
-        if os.path.exists(image_path):
-            context['anh_3'] = InlineImage(doc, image_path, width=Cm(15))
+        if len(hinh_anh_list) > 2 and hinh_anh_list[2].image:
+            context['anh_3'] = InlineImage(doc, hinh_anh_list[2].image.path, width=Cm(15))
+    
+    except FileNotFoundError:
+        modeladmin.message_user(request, "Lỗi: Không tìm thấy file ảnh trên ổ đĩa. Vui lòng kiểm tra lại file đã upload.", messages.ERROR)
+        return
             
     doc.render(context)
     
