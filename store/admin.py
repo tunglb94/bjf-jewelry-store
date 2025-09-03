@@ -280,6 +280,8 @@ class BatDongSanAdmin(admin.ModelAdmin):
         ("III. Phân tích", {"fields": ("phan_tich_tiem_nang", "uu_diem_vi_tri", "nhuoc_diem", "quy_hoach")}),
         ("V. Khảo sát", {"fields": ("nguoi_khao_sat", "thoi_gian_khao_sat", "ghi_chu_them")}),
     )
+    # Thêm dòng này để kích hoạt dấu "+"
+    raw_id_fields = ('loai_bds', 'nguoi_khao_sat')
 
 # =======================================================
 # ==          TÙY CHỈNH TRANG QUẢN LÝ GROUP            ==
