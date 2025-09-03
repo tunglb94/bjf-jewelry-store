@@ -26,7 +26,8 @@
             {% endif %}
 
             <div class="prose max-w-none text-gray-600">
-                {{ post.content|linebreaks }}
+                {# Thay thế |linebreaks bằng |safe để hiển thị đúng HTML #}
+                {{ post.content|safe }}
             </div>
         </div>
     </div>
