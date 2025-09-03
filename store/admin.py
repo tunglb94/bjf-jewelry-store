@@ -237,31 +237,34 @@ def export_as_docx(modeladmin, request, queryset):
         'ghi_chu_them': bds.ghi_chu_them,
     }
 
-    # === PHẦN GỠ LỖI BẮT ĐẦU ===
-    image_paths_to_check = []
     hinh_anh_list = list(bds.hinh_anh.all())
+    if not hinh_anh_list:
+        messages.warning(request, "Bất động sản này không có hình ảnh nào để chèn vào file.")
 
     for i, hinh_anh in enumerate(hinh_anh_list[:3]):
         if hinh_anh.image and hasattr(hinh_anh.image, 'path'):
             image_path = hinh_anh.image.path
-            image_paths_to_check.append(image_path)
             
-            # Kiểm tra xem tệp có tồn tại không
-            if os.path.exists(image_path):
-                try:
-                    context[f'anh_{i+1}'] = InlineImage(doc, image_path, width=Cm(15))
-                except Exception as e:
-                    messages.error(request, f"Lỗi khi xử lý ảnh {i+1}: {e}")
-                    return
-            else:
-                # Nếu không tồn tại, báo lỗi chi tiết
-                messages.error(request, f"Lỗi: Không tìm thấy tệp ảnh {i+1} tại đường dẫn: {image_path}")
+            # BƯỚC 1: KIỂM TRA SỰ TỒN TẠI
+            if not os.path.exists(image_path):
+                messages.error(request, f"Lỗi nghiêm trọng: Không tìm thấy tệp ảnh {i+1} tại đường dẫn: {image_path}")
+                return
+
+            # BƯỚC 2: KIỂM TRA QUYỀN ĐỌC
+            try:
+                with open(image_path, 'rb') as f:
+                    pass  # Nếu mở được file tức là có quyền đọc
+            except IOError as e:
+                messages.error(request, f"Lỗi nghiêm trọng: Không có quyền đọc tệp ảnh {i+1} tại đường dẫn: {image_path}. Lỗi: {e}")
+                return
+
+            # BƯỚC 3: THỬ TẠO ĐỐI TƯỢNG INLINEIMAGE
+            try:
+                context[f'anh_{i+1}'] = InlineImage(doc, image_path, width=Cm(15))
+            except Exception as e:
+                messages.error(request, f"Lỗi khi xử lý ảnh {i+1} với docxtpl: {e}")
                 return
     
-    if not image_paths_to_check:
-        messages.warning(request, "Bất động sản này không có hình ảnh nào để chèn vào file.")
-    # === PHẦN GỠ LỖI KẾT THÚC ===
-
     doc.render(context)
 
     buffer = io.BytesIO()
