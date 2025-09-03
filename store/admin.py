@@ -18,7 +18,7 @@ from .models import (
     ProductVariation, ProductImage, ActionButton, Testimonial,
     AboutPage, JobPosting,
     PhongBan, ChucVu, NhanVien, ChamCong,
-    BatDongSan, HinhAnhBatDongSan # Model Bất động sản và Hình ảnh mới
+    BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan # SỬA LỖI: Thêm LoaiBatDongSan vào import
 )
 
 @admin.register(Category)
@@ -191,6 +191,11 @@ admin.site.register(ChucVu)
 # ==         ADMIN CHO HỆ THỐNG BẤT ĐỘNG SẢN           ==
 # =======================================================
 
+@admin.register(LoaiBatDongSan)
+class LoaiBatDongSanAdmin(admin.ModelAdmin):
+    list_display = ('ten_loai',)
+    search_fields = ('ten_loai',)
+
 class HinhAnhBatDongSanInline(admin.TabularInline):
     model = HinhAnhBatDongSan
     extra = 3
@@ -211,7 +216,8 @@ def export_as_docx(modeladmin, request, queryset):
     
     context = {
         'id_tai_san': bds.id_tai_san,
-        'loai_bds': bds.loai_bds,
+        # SỬA LỖI: Lấy đúng tên loại BĐS từ ForeignKey
+        'loai_bds': bds.loai_bds.ten_loai if bds.loai_bds else "",
         'dia_chi': bds.dia_chi,
         'chi_tiet_su_dung_dat': bds.chi_tiet_su_dung_dat,
         'mat_tien': bds.mat_tien,
