@@ -20,11 +20,10 @@ from .models import (
     PhongBan, ChucVu, NhanVien, ChamCong,
     BatDongSan, HinhAnhBatDongSan, LoaiBatDongSan
 )
-# Thư viện mới để tạo PDF từ HTML
+# Thư viện để tạo PDF từ HTML
 from django.template.loader import render_to_string
 from weasyprint import HTML
 
-# ... (Toàn bộ các lớp Admin khác từ CategoryAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
@@ -213,10 +212,10 @@ def export_as_docx(modeladmin, request, queryset):
         return
 
     bds = queryset.first()
-    
+
     template_path = os.path.join(settings.BASE_DIR, 'store', 'docx_templates', 'template.docx')
     doc = DocxTemplate(template_path)
-    
+
     context = {
         'id_tai_san': bds.id_tai_san,
         'loai_bds': bds.loai_bds.ten_loai if bds.loai_bds else "",
@@ -249,7 +248,7 @@ def export_as_docx(modeladmin, request, queryset):
     buffer = io.BytesIO()
     doc.save(buffer)
     buffer.seek(0)
-    
+
     response = HttpResponse(buffer.getvalue(), content_type='application/vnd.openxmlformats-officedocument.wordprocessingml.document')
     response['Content-Disposition'] = f'attachment; filename={bds.id_tai_san}.docx'
     return response
