@@ -130,16 +130,40 @@ JAZZMIN_SETTINGS = {
     "welcome_sign": "Chào mừng đến với trang quản trị Tập đoàn BJF Group",
     "copyright": "BJF Group Ltd",
     
-    # THÊM DÒNG NÀY ĐỂ NHẬN FILE CSS TÙY CHỈNH
     "custom_css": "css/custom_jazzmin.css",
 
+    # ĐÂY LÀ PHẦN QUAN TRỌNG CẦN CẬP NHẬT
     "order_with_respect_to": [
-        "store.NhanVien", "store.ChamCong", "store.PhongBan", "store.ChucVu",
+        # Nhân sự
+        "store.NhanVien",
+        "store.ChamCong",
+        "store.PhongBan",
+        "store.ChucVu",
+        
+        # Bất động sản
         "store.BatDongSan",
-        "store.Order", "store.Product", "store.Category",
-        "store.Post", "store.Banner",
-        "auth.User", "auth.Group",
+        "store.LoaiBatDongSan",
+        
+        # Kinh doanh
+        "store.Order",
+        "store.Product",
+        "store.Category",
+        "store.Testimonial",
+        "store.ContactMessage",
+        
+        # Nội dung & Marketing
+        "store.Post",
+        "store.Banner",
+        "store.AboutPage",
+        
+        # Tuyển dụng
+        "store.JobPosting",
+        
+        # Hệ thống
+        "auth.User",
+        "auth.Group",
         "store.SiteConfiguration",
+        "store.ActionButton",
     ],
 
     "icons": {
@@ -150,11 +174,17 @@ JAZZMIN_SETTINGS = {
         "store.PhongBan": "fas fa-building",
         "store.ChucVu": "fas fa-id-badge",
         "store.BatDongSan": "fas fa-city",
+        "store.LoaiBatDongSan": "fas fa-th-list",
         "store.Order": "fas fa-file-invoice-dollar",
         "store.Product": "fas fa-gem",
         "store.Category": "fas fa-tags",
         "store.Post": "fas fa-newspaper",
         "store.Banner": "fas fa-image",
         "store.SiteConfiguration": "fas fa-cog",
+        "store.JobPosting": "fas fa-briefcase",
+        "store.Testimonial": "fas fa-comments",
+        "store.ContactMessage": "fas fa-envelope",
+        "store.AboutPage": "fas fa-info-circle",
+        "store.ActionButton": "fas fa-mouse-pointer",
     },
 }
