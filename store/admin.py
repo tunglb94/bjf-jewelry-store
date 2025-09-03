@@ -23,12 +23,14 @@ from .models import (
 # Thư viện để tạo PDF từ HTML
 from django.template.loader import render_to_string
 from weasyprint import HTML
+from django.contrib.staticfiles.finders import find
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
 
+# ... (Toàn bộ các lớp Admin khác từ ProductAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
@@ -254,6 +256,24 @@ def export_as_docx(modeladmin, request, queryset):
     return response
 export_as_docx.short_description = "Tải về file thông tin BĐS (.docx)"
 
+def pdf_url_fetcher(url):
+    """
+    Hàm này giúp WeasyPrint tìm thấy các tệp tĩnh và media trên hệ thống tệp.
+    """
+    if url.startswith(settings.MEDIA_URL):
+        path = os.path.join(settings.MEDIA_ROOT, url[len(settings.MEDIA_URL):])
+    elif url.startswith(settings.STATIC_URL):
+        path = find(url[len(settings.STATIC_URL):])
+    else:
+        # Giữ nguyên các URL bên ngoài (ví dụ: link font từ Google)
+        return default_url_fetcher(url)
+    
+    if path:
+        return {'file_obj': open(path, 'rb')}
+    
+    # Trả về lỗi nếu không tìm thấy tệp
+    raise IOError(f"File not found: {url}")
+
 def export_as_pdf(modeladmin, request, queryset):
     if queryset.count() != 1:
         modeladmin.message_user(request, "Vui lòng chỉ chọn 1 tài sản để xuất file.", messages.WARNING)
@@ -274,7 +294,7 @@ def export_as_pdf(modeladmin, request, queryset):
     
     try:
         # Tạo PDF
-        pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri()).write_pdf()
+        pdf_file = HTML(string=html_string, base_url=settings.BASE_DIR, url_fetcher=pdf_url_fetcher).write_pdf()
         
         # Tạo response
         response = HttpResponse(pdf_file, content_type='application/pdf')

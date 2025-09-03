@@ -40,7 +40,7 @@
         }
         strong {
             display: inline-block;
-            width: 200px; /* Điều chỉnh độ rộng của nhãn */
+            width: 200px;
         }
         .image-container {
             margin-top: 20px;
@@ -98,7 +98,7 @@
         {% for hinh_anh in hinh_anh_list %}
             <div class="image-container">
                 <h3>Ảnh {{ forloop.counter }}: {{ hinh_anh.mo_ta }}</h3>
-                <img src="{{ hinh_anh.image.path }}">
+                <img src="{{ hinh_anh.image.url }}">
             </div>
         {% endfor %}
     {% endif %}
