@@ -24,13 +24,14 @@ from .models import (
 from django.template.loader import render_to_string
 from weasyprint import HTML
 from django.contrib.staticfiles.finders import find
+from weasyprint.urls import default_url_fetcher
 
-# ... (Toàn bộ các lớp Admin khác từ CategoryAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
 
+# ... (Toàn bộ các lớp Admin khác từ ProductAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
@@ -265,11 +266,14 @@ def pdf_url_fetcher(url):
     elif url.startswith(settings.STATIC_URL):
         path = find(url[len(settings.STATIC_URL):])
     else:
-        # Nếu không phải là URL của media hay static, trả về None để WeasyPrint tự xử lý (ví dụ: link font online)
-        return None
+        # Đối với các URL bên ngoài (như link font), hãy để trình tìm nạp mặc định xử lý
+        return default_url_fetcher(url)
     
-    # Trả về một dictionary chứa đường dẫn tệp
-    return {'file_obj': open(path, 'rb')}
+    if path and os.path.exists(path):
+        return {'file_obj': open(path, 'rb')}
+    
+    # Nếu không tìm thấy tệp cục bộ, hãy để trình tìm nạp mặc định thử lại
+    return default_url_fetcher(url)
 
 def export_as_pdf(modeladmin, request, queryset):
     if queryset.count() != 1:
@@ -291,7 +295,8 @@ def export_as_pdf(modeladmin, request, queryset):
     
     try:
         # Tạo PDF
-        pdf_file = HTML(string=html_string, base_url=request.build_absolute_uri(), url_fetcher=pdf_url_fetcher).write_pdf()
+        html = HTML(string=html_string, base_url=request.build_absolute_uri(), url_fetcher=pdf_url_fetcher)
+        pdf_file = html.write_pdf()
         
         # Tạo response
         response = HttpResponse(pdf_file, content_type='application/pdf')
