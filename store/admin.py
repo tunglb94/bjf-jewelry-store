@@ -22,16 +22,15 @@ from .models import (
 )
 # Thư viện để tạo PDF từ HTML
 from django.template.loader import render_to_string
-from weasyprint import HTML
+from weasyprint import HTML, default_url_fetcher
 from django.contrib.staticfiles.finders import find
-from weasyprint.urls import default_url_fetcher
 
+# ... (Toàn bộ các lớp Admin khác từ CategoryAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ['name', 'slug']
     prepopulated_fields = {'slug': ('name',)}
 
-# ... (Toàn bộ các lớp Admin khác từ ProductAdmin đến NhanVienAdmin, ChamCongAdmin... giữ nguyên như file cũ) ...
 class ProductImageInline(admin.TabularInline):
     model = ProductImage
     extra = 1
@@ -257,7 +256,7 @@ def export_as_docx(modeladmin, request, queryset):
     return response
 export_as_docx.short_description = "Tải về file thông tin BĐS (.docx)"
 
-def pdf_url_fetcher(url):
+def pdf_url_fetcher(url, *args, **kwargs):
     """
     Hàm này giúp WeasyPrint tìm thấy các tệp tĩnh và media trên hệ thống tệp.
     """
@@ -266,14 +265,14 @@ def pdf_url_fetcher(url):
     elif url.startswith(settings.STATIC_URL):
         path = find(url[len(settings.STATIC_URL):])
     else:
-        # Đối với các URL bên ngoài (như link font), hãy để trình tìm nạp mặc định xử lý
-        return default_url_fetcher(url)
+        # Đối với các URL bên ngoài (ví dụ: link font), hãy để trình tìm nạp mặc định xử lý
+        return default_url_fetcher(url, *args, **kwargs)
     
     if path and os.path.exists(path):
         return {'file_obj': open(path, 'rb')}
     
     # Nếu không tìm thấy tệp cục bộ, hãy để trình tìm nạp mặc định thử lại
-    return default_url_fetcher(url)
+    return default_url_fetcher(url, *args, **kwargs)
 
 def export_as_pdf(modeladmin, request, queryset):
     if queryset.count() != 1:
