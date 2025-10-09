@@ -1,0 +1,65 @@
+{% extends 'store/base.html' %}
+{% load humanize %}
+{% load custom_filters %}
+
+{% block title %}Kết quả tìm kiếm cho "{{ query }}" - {{ settings.site_name }}{% endblock %}
+
+{% block content %}
+<div class="py-20 bg-gray-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+            {% if query %}
+                <h1 class="text-4xl font-bold text-gray-900">Kết quả tìm kiếm cho: "{{ query }}"</h1>
+                <p class="text-xl text-gray-600 mt-2">Tìm thấy {{ products.count }} sản phẩm phù hợp.</p>
+            {% else %}
+                <h1 class="text-4xl font-bold text-gray-900">Tìm kiếm sản phẩm</h1>
+                <p class="text-xl text-gray-600 mt-2">Vui lòng nhập từ khóa để tìm kiếm.</p>
+            {% endif %}
+        </div>
+
+        {% if products %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+                {% for product in products %}
+                <div class="bg-white rounded-2xl overflow-hidden shadow-lg product-hover">
+                    <a href="{% url 'store:product_detail' product.slug %}" class="block">
+                        <div class="aspect-square overflow-hidden">
+                            <img src="{% if product.images.first.image %}{{ product.images.first.image.url }}{% else %}https://placehold.co/600x600/EEE/31343C?text=BJF{% endif %}" alt="{{ product.name }}" class="w-full h-full object-cover"/>
+                        </div>
+                    </a>
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2 truncate">{{ product.name }}</h3>
+                        <div>
+                            {% if product.sale_price %}
+                                <span class="text-2xl font-bold gradient-text">{{ product.sale_price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                                <span class="ml-2 text-gray-500 line-through">{{ product.price|format_currency }}</span>
+                            {% else %}
+                                <span class="text-2xl font-bold gradient-text">{{ product.price|format_currency }} <span class="text-sm font-normal">VND</span></span>
+                            {% endif %}
+                        </div>
+                        <div class="mt-4 space-y-2">
+                            <form action="{% url 'store:add_to_cart' %}" method="POST" class="block">
+                                {% csrf_token %}
+                                <input type="hidden" name="product_id" value="{{ product.id }}">
+                                <button type="submit" class="w-full bg-primary hover:bg-secondary text-white px-4 py-2 rounded-lg font-semibold transition-colors">
+                                    Thêm vào giỏ hàng
+                                </button>
+                            </form>
+                            <a href="{% url 'store:product_detail' product.slug %}" class="block text-center border border-gray-300 hover:border-primary hover:text-primary text-gray-800 px-4 py-2 rounded-lg font-semibold transition-colors">
+                                Xem chi tiết
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        {% elif query %}
+            <div class="text-center bg-white p-12 rounded-2xl shadow-xl">
+                <p class="text-xl text-gray-600">Không tìm thấy sản phẩm nào phù hợp với từ khóa của bạn.</p>
+                <a href="{% url 'store:product_list' %}" class="mt-6 inline-block bg-primary hover:bg-secondary text-white px-8 py-3 rounded-lg font-semibold transition-colors">
+                    Xem tất cả sản phẩm
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

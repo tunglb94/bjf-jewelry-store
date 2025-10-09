@@ -3,12 +3,12 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib import messages
 from .models import (
-    Product, Category, Post, ContactMessage, Order, OrderItem, 
+    Product, Category, Post, ContactMessage, Order, OrderItem,
     Banner, ProductVariation, ProductImage, Testimonial, ActionButton,
     AboutPage, JobPosting
 )
 from django.views.decorators.http import require_POST
-import json
+from django.db.models import Q  # THÊM DÒNG NÀY
 
 def home(request):
     featured_products = Product.objects.filter(is_available=True, is_featured=True).order_by('-created_at')[:8]
@@ -16,9 +16,8 @@ def home(request):
     banners = Banner.objects.filter(is_active=True)
     latest_posts = Post.objects.order_by('-published_date')[:3]
     testimonials = Testimonial.objects.filter(is_active=True).order_by('order')[:3]
-    # Lấy 3 tin tuyển dụng mới nhất
     latest_jobs = JobPosting.objects.filter(is_active=True).order_by('-published_date')[:3]
-    
+
     context = {
         'products': featured_products,
         'categories': categories,
@@ -29,8 +28,28 @@ def home(request):
     }
     return render(request, 'store/index.html', context)
 
+# THÊM TOÀN BỘ HÀM search_results NÀY VÀO
+def search_results(request):
+    """
+    View để xử lý tìm kiếm sản phẩm.
+    """
+    query = request.GET.get('q', '')
+    products = []
+    
+    if query:
+        # Tìm các sản phẩm có tên hoặc mô tả chứa từ khóa (không phân biệt chữ hoa/thường)
+        products = Product.objects.filter(
+            Q(name__icontains=query) | Q(description__icontains=query),
+            is_available=True
+        ).distinct()
+        
+    context = {
+        'query': query,
+        'products': products,
+    }
+    return render(request, 'store/search_results.html', context)
+
 def about_us(request):
-    # Lấy đối tượng trang About Us (vì là singleton nên chỉ có 1)
     about_page_content = AboutPage.objects.get()
     context = {
         'about_page': about_page_content
@@ -45,7 +64,7 @@ def product_list(request):
         'categories': categories,
     }
     return render(request, 'store/product_list.html', context)
-    
+
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_available=True)
     related_products = Product.objects.filter(category=product.category, is_available=True).exclude(id=product.id)[:4]
